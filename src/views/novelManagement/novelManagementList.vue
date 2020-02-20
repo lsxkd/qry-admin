@@ -1,0 +1,553 @@
+<template>
+  <!-- $t is vue-i18n global function to translate lang -->
+  <div class="app-container">
+    <el-dialog
+        v-el-drag-dialog
+        title="添加/编辑小说"
+        :visible.sync="dialogTableVisible"
+        width='70%'
+      >
+      <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
+        <el-row>
+          <el-col :sm="24" :md="12">
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="书名:" prop="name">
+              <el-input class="article-textarea" placeholder="请输入书名" style="width:215px;" v-model.trim="dialogData.name"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="简介:" prop="introduction">
+              <el-input type="textarea"  :rows="2"  placeholder="请输入简介" style="width:215px;"  v-model.trim="dialogData.introduction"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="作者:" prop="author">
+              <el-input class="article-textarea" placeholder="请输入作者" style="width:215px;"  v-model.trim="dialogData.author"></el-input>
+            </el-form-item>
+            
+            <el-form-item style="margin-bottom: 10px;" label-width="120px" label="封面图片:" prop="coverImgUrl">
+              <el-upload
+                class="avatar-uploader"
+                :action="FileUpload"
+                :show-file-list="false"
+                :headers="{'Authorization':tokenData}"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="字数:" prop="typeNum">
+              <el-input class="article-textarea" placeholder="请输入字数" style="width:215px;"  v-model.trim="dialogData.typeNum"></el-input>
+            </el-form-item>
+            
+          </el-col>
+          <el-col :sm="24" :md="12">
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="分类:" prop="categoryId">
+              <el-select v-model="dialogData.categoryId" filterable remote reserve-keyword :remote-method="remoteMethod"  placeholder="请选择" style="width:215px;">
+                <el-option
+                  v-for="item in categoryListData"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="是否完结:" prop="complete">
+              <el-select v-model="dialogData.complete" clearable placeholder="请选择" style="width:215px;">
+                <el-option label="否" :value="0"> </el-option>
+                <el-option label="是" :value="1"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="是否免费:" prop="free">
+              <el-select v-model="dialogData.free" clearable placeholder="请选择" style="width:215px;">
+                <el-option label="否" :value="0"> </el-option>
+                <el-option label="是" :value="1"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="标签:" prop="tagsData">
+              
+              <el-select v-model="dialogData.tagsData" @change="selectChange" multiple filterable remote reserve-keyword :remote-method="remoteMethod"  placeholder="请选择" style="width:215px;">
+                <el-option
+                  v-for="item in tagListData"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评分:" prop="score">
+              <el-input class="article-textarea" placeholder="请输入评分" style="width:215px;"  v-model.trim="dialogData.score"></el-input>
+            </el-form-item>
+            
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="收藏数量:" prop="collectionNum">
+              <el-input class="article-textarea" placeholder="请输入收藏数量" style="width:215px;"  v-model.trim="dialogData.collectionNum"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评论数:" prop="commentNum">
+              <el-input class="article-textarea" placeholder="请输入评论数" style="width:215px;"  v-model.trim="dialogData.commentNum"></el-input>
+            </el-form-item>
+            
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="总推荐(点击量):" prop="readNum">
+              <el-input class="article-textarea" placeholder="请输入总推荐(点击量)" style="width:215px;"  v-model.trim="dialogData.readNum"></el-input>
+            </el-form-item>
+            <!-- <el-form-item style="margin-bottom: 20px;" label-width="120px" label="创建日期:" prop="createTime">
+              <el-date-picker
+                v-model="dialogData.createTime"
+                type="date"
+                placeholder="选择日期" style="width:215px;">
+              </el-date-picker>
+            </el-form-item> -->
+          </el-col>
+        </el-row>
+        
+        
+        <div style="text-align:center;">
+          <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
+          <el-button type="success" @click="managerBookSave">确定</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
+    <el-form  size="small" inline :model="userListPage">
+      <el-form-item label="书名:">
+        <el-input placeholder="书名" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
+      </el-form-item>
+      <el-form-item label="分类:">
+        <!-- <el-input placeholder="分类ID" v-model.trim="userListPage.categoryId" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable /> -->
+        <el-select v-model="userListPage.categoryId" filterable  clearable placeholder="请选择" style="width:150px;">
+          <el-option
+            v-for="item in categoryListData"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="是否完结:">
+        <el-select v-model="userListPage.complete" clearable placeholder="请选择">
+          <el-option label="否" value="0"> </el-option>
+          <el-option label="是" value="1"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="是否免费:">
+        <el-select v-model="userListPage.free" clearable placeholder="请选择">
+          <el-option label="否" value="0"> </el-option>
+          <el-option label="是" value="1"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          title="搜索"
+          style="font-size: 16px"
+          @click="searchBtn()"
+        />
+      </el-form-item>
+      <el-form-item style="margin-bottom:15px;float:right;">
+        <el-button type="primary" @click="openEditOrAdd('add')" >添加小说</el-button>
+      </el-form-item>
+    </el-form>
+    
+    <el-table :data="managerBookPageData" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
+      <el-table-column align="center" label='#' :min-width="60">
+        <template slot-scope="scope">
+          {{scope.$index + 1}}
+        </template>
+      </el-table-column>
+      <el-table-column label="分类" prop='categoryName' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="书名" prop='name' align="center" :min-width="150"></el-table-column>
+      <el-table-column label='封面图片' :min-width="110" align="center">
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            title=""
+            width="300"
+            trigger="hover">
+            <img :src="scope.row.coverImgUrlAll" style="width:100%;height:auto;">
+            <img :src="scope.row.coverImgUrlAll" slot="reference" style="width:auto;height:80px;">
+          </el-popover>
+          
+        </template>
+      </el-table-column>
+      <el-table-column label="作者" prop='author' :min-width="110"></el-table-column>
+      
+      <!-- <el-table-column label="简介" prop='introduction' :min-width="150"></el-table-column> -->
+      <el-table-column label='简介' :min-width="110" align="center">
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            title=""
+            width="300"
+            trigger="hover">
+            <div >{{scope.row.introduction}}</div>
+            <div slot="reference" style="width:90px;height:81px;line-height:27px;overflow: hidden;">{{scope.row.introduction}}</div>
+          </el-popover>
+          
+        </template>
+      </el-table-column>
+      <el-table-column label="字数" prop='typeNum' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="收藏数量" prop='collectionNum' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="评论数" prop='commentNum' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="总推荐(点击量)" prop='readNum' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="评分" prop='score' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="标签" prop='tags' align="center" :min-width="110">
+        <template slot-scope="scope">
+          <span v-if="scope.row.tagList" v-for="(em,indexEms) in scope.row.tagList" :key='indexEms'>
+            {{em.tag}}
+          </span>
+          
+        </template>
+      </el-table-column>
+
+      <el-table-column label="是否完结" align="center" :min-width="110">
+        <template slot-scope="scope">
+          <span v-if="scope.row.complete == 0">否</span>
+          <span v-if="scope.row.complete == 1">是</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否免费" align="center" :min-width="110">
+        <template slot-scope="scope">
+          <span v-if="scope.row.free == 0">否</span>
+          <span v-if="scope.row.free == 1">是</span>
+        </template>
+      </el-table-column>
+      <el-table-column label='创建时间' align="center" :min-width="160">
+        <template slot-scope="scope">
+          <!-- {{scope.row.createDate | initTime}} -->
+          {{scope.row.createTime}}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" fixed="right" label="操作" width="280">
+        <template slot-scope="scope">
+          <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
+          <!-- <el-button type="primary" size="small">发行记录</el-button> -->
+          
+          <router-link class="link-type" :to="'/novelManagement/novelChapterList/'+scope.row.id+'?bookName=' + scope.row.name">
+            <el-button type="success" size="mini" >章节列表</el-button>
+          </router-link>
+          <el-button type="primary" size="mini" icon="el-icon-edit" @click="openEditOrAdd('edit',scope.row)" style="margin-left:10px;">编辑</el-button>
+          <el-button type="danger" size="mini" @click="delConfirm(scope.row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+        @current-change="pageChange"
+        style="text-align:center;margin-top:3px"
+        background
+        layout="prev, pager, next"
+        :page-size="userListPage.pageSize"
+        :current-page="userListPage.pageNum"
+        :total="total"
+      ></el-pagination>
+  </div>
+</template>
+
+<script>
+import { managerBookPage,managerBookSave,managerBookDelete,fileUpload,categoryList,tagList } from '@/api/category.js';
+import moment from 'moment';
+import { mapState } from "vuex";
+import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+import { getToken } from '@/utils/auth'
+export default {
+  name: 'managerBookPage',
+  directives: { elDragDialog },
+  data() {
+    return {
+      managerBookPageData: [],
+      total: 1,
+      userListPage: {
+        pageNum: 1,
+        pageSize: 10,
+        categoryId:'',
+        complete:'',//是否完结:0否,1是
+        free:'',//是否免费:0否,1是
+        name:'',//书名
+      },
+      registrationTime:[],
+      dialogTableVisible:false,
+      dialogData:{
+        name:'',
+        author:'',
+        categoryId:'',
+        collectionNum:'',
+        commentNum:'',
+        complete:'',
+        coverImgUrl:'',
+        createTime:'',
+        free:'',
+        introduction:'',
+        readNum:'',
+        score:'',
+        tags:'',
+        typeNum:'',
+        tagsData:[]         ,
+      },
+      
+      dialogRules: {
+        name: [{ required: true, trigger: 'blur',message:'请输入书名' }],
+        introduction: [{ required: true, trigger: 'blur',message:'请输入简介'  }],
+        author: [{ required: true, trigger: 'blur',message:'请输入作者'  }],
+        categoryId: [{ required: true, trigger: 'blur',message:'请选择分类'  }],
+        free: [{ required: true, trigger: 'blur',message:'请选择是否免费'  }],
+        complete: [{ required: true, trigger: 'blur',message:'请选择是否完结'  }],
+        tags: [{ required: true, trigger: 'blur',message:'请选择标签'  }],
+        tagsData:[{ required: true, trigger: 'blur',message:'请选择标签'  }],
+        coverImgUrl: [{ required: true, trigger: 'blur',message:'请上传封面'  }]
+        
+      },
+      imgUploadSrc:'',
+      categoryListPage:{
+        pageNum: 1,
+        pageSize: 100,
+      },
+      categoryListData:[],
+      tagListPage:{
+        pageNum: 1,
+        pageSize: 100,
+      },
+      tagListData:[],
+      
+    }
+  },
+  computed: {
+    tokenData(){
+      return getToken()
+    }
+  },
+  created() {
+    this.managerBookPage();
+    this.categoryList()
+    this.tagList()
+  },
+  methods: {
+    selectChange(val){
+      this.$forceUpdate();
+    },
+    tagList() {
+      this.listLoading = true
+      if(!this.tagListPage.tag){
+        delete this.userListPage.tag
+      }
+      tagList(this.tagListPage).then(res => {
+        // console.log(res.data)
+        this.tagListData = res.data.list
+        this.tagListData.map(item=>{
+          item.label = item.tag
+          item.value = item.id
+        })
+      })
+    },
+    remoteMethod(query){
+      if (query !== '') {
+        this.categoryListPage.name = query
+        this.categoryList()
+        
+      }else{
+        delete this.categoryListPage.name
+        this.categoryList()
+      }
+      
+    },
+    categoryList() {  //分类
+      this.listLoading = true
+      if(!this.categoryListPage.name){
+        delete this.categoryListPage.name
+      }
+      categoryList(this.categoryListPage).then(res => {
+        // console.log(res.data)
+        this.categoryListData = res.data.list
+        this.categoryListData.map(item=>{
+          item.label = item.name
+          item.value = item.id
+        })
+        
+      })
+    },
+    handleAvatarSuccess(res, file) {
+      this.imgUploadSrc = res.data.all_url
+      this.dialogData.coverImgUrl = res.data.short_url;
+    },
+    beforeAvatarUpload(file) {
+      var testmsg = file.name.substring(file.name.lastIndexOf(".") + 1);
+      const isJPG = testmsg == "jpg" || testmsg == "JPG" || testmsg == "png" || testmsg == "PNG" || testmsg == "bpm" || testmsg == "JPEG" || testmsg == "jpeg" || testmsg == "BPM"
+      const isLt2M = file.size / 1024 / 1024 < 0.4;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 jpg,png,bpm 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 400kb!');
+      }
+      return isJPG && isLt2M;
+    },
+    openEditOrAdd(flag,row){
+      
+      // delete this.dialogData.createTime
+      if(flag == 'edit'){
+        this.dialogData = row
+        
+        for(let key in this.dialogData){
+          if(this.dialogData[key] == null){
+            this.dialogData[key] = ''
+          }
+        }
+        // let nArrs = []
+        // if(this.dialogData.tagList&&this.dialogData.tagList.length>0){
+        //   this.dialogData.tagList.map((item) => {
+        //     nArrs.push(item.value)
+        //   })
+        // }
+        this.dialogData.tagsData = []
+        let newsArra = this.dialogData.tags
+        if(newsArra&&newsArra.length>0){
+          newsArra = newsArra.split(',')
+          newsArra.map(item=>{
+            this.dialogData.tagsData.push(Number(item))
+          })
+          // this.dialogData.tagsData = JSON.parse(JSON.stringify(this.dialogData.tagsData))
+        }else{
+          this.dialogData.tagsData = ''
+        }
+        
+        console.log(this.tagListData)
+        console.log(this.dialogData.tagsData)
+        this.imgUploadSrc = this.dialogData.coverImgUrlAll
+      }else{
+        
+        delete this.dialogData.id
+        for(let key in this.dialogData){
+          this.dialogData[key] = ''
+        }
+        this.dialogData.tagsData = []
+        this.imgUploadSrc = ''
+      }
+      
+      this.dialogTableVisible = true
+    },
+    searchBtn(){
+      this.managerBookPage()
+    },
+    pageChange (p) {
+      this.userListPage.pageNum = p
+      this.managerBookPage()
+    },
+    managerBookPage() {
+      this.listLoading = true
+      if(!this.userListPage.name){
+        delete this.userListPage.name
+      }
+      managerBookPage(this.userListPage).then(res => {
+        this.managerBookPageData = res.data.list
+        this.total = res.data.total
+        
+      })
+    },
+    managerBookSave(){
+      this.$refs.dialogData.validate(valid => {
+        if (valid) {
+          if(this.dialogData.coverImgUrl == ''){
+            this.$message.error('请上传分类图片！');
+            return
+          }
+          let arrs = this.dialogData.tagsData
+          this.dialogData.tags = arrs.join(",")
+          // return 
+          managerBookSave(this.dialogData).then(res => {
+            if(res.code == 200){
+              this.dialogTableVisible = false
+              
+              this.managerBookPage()
+              this.$message({
+                  type: 'success',
+                  message: '添加成功!'
+              });
+            }else{
+              this.$message.error(res.msg);
+            }
+          })
+        }
+      })
+    },
+    delConfirm(id){
+      this.$confirm('确认删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.delManagers(id)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
+    delManagers(id){
+      const data = {
+        id:id
+      }
+      managerBookDelete(data).then(res => {
+        if(res.code == 200){
+              this.managerBookPage()
+              this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+              });
+            }else{
+              this.$message.error(res.msg);
+            }
+      })
+    },
+  },
+  filters: {
+    initTime(v) {
+      return moment(v).format('YYYY-MM-DD HH:hh:ss');
+    }
+  }
+}
+</script>
+
+<style>
+.radio-label {
+  font-size: 14px;
+  color: #606266;
+  line-height: 40px;
+  padding: 0 12px 0 30px;
+}
+/* table 组件 */
+/* .el-table .warning-row {
+  color: #f56c6c;
+}
+.el-table .success-row {
+  color: #4d9728
+}
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background: #f0f9eb;
+} */
+</style>
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>
+

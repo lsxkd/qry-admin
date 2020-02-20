@@ -8,14 +8,22 @@ export default {
     userWithdrawList: '用户提现列表',
     reportList: '平台每日盈利',
     reportDayList: '平台每日盈利',
+    appManagement:'APP版本管理',
 
     managersAdmin:'后台管理员管理',
     managersList:'管理员列表',
+    applyNovelManagement:'申请上架小说管理',
 
     managerClassified:'分类管理',
     classifiedList:'分类列表',
+
+    novelManagement:'小说管理',
+    novelManagementList:'小说列表',
+    novelChapterList:'小说章节列表',
+    novelChapterContent:'小说章节内容编辑',
     
-    managerRechare:'充值套餐管理',
+    
+    memberCenter:'会员中心管理',
     rechareList:'充值套餐列表',
 
     managerOrder:'订单管理',

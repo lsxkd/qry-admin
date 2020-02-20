@@ -14,17 +14,18 @@
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="简介:" prop="introduce">
           <el-input type="textarea"  :rows="2"  placeholder="请输入简介" style="width:215px;"  v-model.trim="dialogData.introduce"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="排序:">
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="排序:" prop="orderNum">
           <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="图片:">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="FileUpload"
             :show-file-list="false"
+            :headers="{'Authorization':tokenData}"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
-            <img v-if="dialogData.iconUrl" :src="dialogData.iconUrl" class="avatar">
+            <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
@@ -71,12 +72,6 @@
           {{scope.$index + 1}}
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column>
-      <el-table-column label='图片' :min-width="110" align="center">
-        <template slot-scope="scope">
-          <img :src="scope.row.iconUrl" alt="" style="width:80px;height:80px;">
-        </template>
-      </el-table-column>
       <el-table-column label='创建时间' :min-width="160">
         <template slot-scope="scope">
           <!-- {{scope.row.createDate | initTime}} -->
@@ -84,8 +79,21 @@
         </template>
       </el-table-column>
       <el-table-column label="名称" prop='name' :min-width="150"></el-table-column>
+      <el-table-column label='图片' :min-width="110" align="center">
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            title=""
+            width="300"
+            trigger="hover">
+            <img :src="scope.row.iconUrlAll" style="width:100%;height:auto;">
+            <img :src="scope.row.iconUrlAll" slot="reference" style="width:auto;height:80px;">
+          </el-popover>
+          
+        </template>
+      </el-table-column>
       <el-table-column label="简介" prop='introduce' :min-width="150"></el-table-column>
-      
+      <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column>
       
       <!-- <el-table-column label="账户状态" :min-width="150">
         <template slot-scope="scope">
@@ -115,9 +123,11 @@
 </template>
 
 <script>
-import { categoryList,addCategory,delCategory } from '@/api/category.js';
+import { categoryList,addCategory,delCategory,fileUpload } from '@/api/category.js';
 import moment from 'moment';
+import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+import { getToken } from '@/utils/auth'
 export default {
   name: 'categoryList',
   directives: { elDragDialog },
@@ -135,12 +145,20 @@ export default {
       dialogData:{
         name:'',
         introduce:'',
+        orderNum:''
       },
       dialogRules: {
         name: [{ required: true, trigger: 'blur',message:'请输入名称' }],
-        introduce: [{ required: true, trigger: 'blur',message:'请输入简介'  }]
+        introduce: [{ required: true, trigger: 'blur',message:'请输入简介'  }],
+        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序'  }]
       },
+      imgUploadSrc:'',
       
+    }
+  },
+  computed: {
+    tokenData(){
+      return getToken()
     }
   },
   created() {
@@ -148,28 +166,39 @@ export default {
   },
   methods: {
     handleAvatarSuccess(res, file) {
-      this.dialogData.iconUrl = URL.createObjectURL(file.raw);
+      this.imgUploadSrc = res.data.all_url
+      this.dialogData.iconUrl = res.data.short_url;
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/*';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      var testmsg = file.name.substring(file.name.lastIndexOf(".") + 1);
+      const isJPG = testmsg == "jpg" || testmsg == "JPG" || testmsg == "png" || testmsg == "PNG" || testmsg == "bpm" || testmsg == "JPEG" || testmsg == "jpeg" || testmsg == "BPM"
+      const isLt2M = file.size / 1024 / 1024 < 0.4;
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error('上传头像图片只能是 jpg,png,bpm 格式!');
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error('上传头像图片大小不能超过 400kb!');
       }
       return isJPG && isLt2M;
     },
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
+      console.log(row)
       if(flag == 'edit'){
         this.dialogData.id = row.id
         this.dialogData.name = row.name
         this.dialogData.introduce = row.introduce
         this.dialogData.orderNum = row.orderNum
         this.dialogData.iconUrl = row.iconUrl
+        this.imgUploadSrc = row.iconUrlAll
+      }else{
+        this.dialogData.id = ''
+        this.dialogData.name = ''
+        this.dialogData.introduce = ''
+        this.dialogData.orderNum = ''
+        this.dialogData.iconUrl = ''
+        this.imgUploadSrc = ''
       }
     },
     searchBtn(){
@@ -192,13 +221,22 @@ export default {
       })
     },
     addManagerBtn(){
+      
       this.$refs.dialogData.validate(valid => {
         if (valid) {
+          if(this.dialogData.iconUrl == ''){
+            this.$message.error('请上传分类图片！');
+            return
+          }
           addCategory(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.username = ''
-              this.dialogData.password = ''
+              this.dialogData.id = ''
+              this.dialogData.name = ''
+              this.dialogData.introduce = ''
+              this.dialogData.orderNum = ''
+              this.dialogData.iconUrl = ''
+              this.imgUploadSrc = ''
               this.getUserList()
               this.$message({
                   type: 'success',

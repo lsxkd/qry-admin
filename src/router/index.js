@@ -91,49 +91,117 @@ export const constantRouterMap = [
 
     ]
   },
+  
+  
   {
-    path: '/managerClassified',
+    path: '/novelManagement',
     component: Layout,
-    redirect: '/managerClassified/classifiedList',
-    name: 'managerClassified',
+    redirect: '/novelManagement/novelManagementList',
+    name: 'novelManagement',
     meta: {
-      title: 'managerClassified',
-      icon: 'classification',
-      name:'分类管理',
+      title: 'novelManagement',
+      icon: 'applyNovelManagement',
+      name:'小说管理',
     },
-    children: [{
-      path: 'classifiedList',
-      component: () => import('@/views/managerClassified/classifiedList'),
-      name: 'classifiedList',
-      meta: {
-        title: 'classifiedList',
-        name:'分类列表',
-        icon: 'classification'
-      }
-    },
+    children: [
+      {
+        path: 'classifiedList',
+        component: () => import('@/views/managerClassified/classifiedList'),
+        name: 'classifiedList',
+        meta: {
+          title: 'classifiedList',
+          name:'分类列表',
+          icon: 'classification'
+        }
+      },
+      {
+        path: 'novelManagementList',
+        component: () => import('@/views/novelManagement/novelManagementList'),
+        name: 'novelManagementList',
+        meta: {
+          title: 'novelManagementList',
+          name:'小说列表',
+          icon: 'applyNovelManagement'
+        }
+      },
+      {
+        path: 'novelChapterList/:id(\\d+)',
+        component: () => import('@/views/novelManagement/novelChapterList'),
+        name: 'novelChapterList',
+        meta: {
+          title: 'novelChapterList',
+          name:'小说章节列表',
+          noCache: true,
+          // icon: 'applyNovelManagement'
+        }, 
+        hidden: true 
+      },
+      {
+        path: 'novelChapterContent/:id(\\d+)',
+        component: () => import('@/views/novelManagement/novelChapterContent'),
+        name: 'novelChapterContent',
+        meta: {
+          title: 'novelChapterContent',
+          name:'小说章节内容编辑',
+          noCache: true,
+          // icon: 'applyNovelManagement'novelChapterContent
+        }, 
+        hidden: true 
+      },
+      {
+        path: 'tagList',
+        component: () => import('@/views/managerTag/tagList'),
+        name: 'tagList',
+        meta: {
+          title: 'tagList',
+          name:'标签列表',
+          icon: 'managerTag'
+        }
+      },
+      {
+        path: 'applyNovelManagement',
+        component: () => import('@/views/applyNovelManagement/applyNovelManagement'),
+        name: 'applyNovelManagement',
+        meta: {
+          title: 'applyNovelManagement',
+          name:'申请上架小说管理',
+          // icon: 'applyNovelManagement'
+        }
+      },
 
     ]
   },
   {
-    path: '/managerRechare',
+    path: '/memberCenter',
     component: Layout,
-    redirect: '/managerRechare/rechareList',
-    name: 'managerRechare',
+    redirect: '/memberCenter/rechareList',
+    name: 'memberCenter',
     meta: {
-      title: 'managerRechare',
-      icon: 'managerRechare',
-      name:'充值套餐管理',
+      title: 'memberCenter',
+      icon: 'memberCenter',
+      name:'会员中心管理',
     },
-    children: [{
-      path: 'rechareList',
-      component: () => import('@/views/managerRechare/rechareList'),
-      name: 'rechareList',
-      meta: {
-        title: 'rechareList',
-        name:'充值套餐列表',
-        icon: 'managerRechare'
-      }
-    },
+    children: [
+      {
+        path: 'rechareList',
+        component: () => import('@/views/memberCenter/rechareList'),
+        name: 'rechareList',
+        meta: {
+          title: 'rechareList',
+          name:'充值套餐列表',
+          icon: 'managerRechare'
+        }
+      },
+      {
+        path: 'vipComposeList',
+        component: () => import('@/views/memberCenter/vipComposeList'),
+        name: 'vipComposeList',
+        meta: {
+          title: 'vipComposeList',
+          name:'VIP套餐列表',
+          icon: 'managerVipCompose'
+        }
+      },
 
     ]
   },
@@ -171,55 +239,28 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/managerTag',
+    path: '/appManagement',
     component: Layout,
-    redirect: '/managerTag/tagList',
-    name: 'managerTag',
+    redirect: '/appManagement/appManagement',
+    name: 'appManagement',
     meta: {
-      title: 'managerTag',
-      icon: 'managerTag',
-      name:'标签管理',
+      title: 'appManagement',
+      icon: 'appManagement',
+      name:'APP版本管理',
     },
     children: [{
-      path: 'tagList',
-      component: () => import('@/views/managerTag/tagList'),
-      name: 'tagList',
+      path: 'appManagement',
+      component: () => import('@/views/appManagement/appManagement'),
+      name: 'appManagement',
       meta: {
-        title: 'tagList',
-        name:'标签列表',
-        icon: 'managerTag'
+        title: 'appManagement',
+        name:'APP版本管理',
+        icon: 'appManagement'
       }
     },
 
     ]
   },
-
-  {
-    path: '/managerVipCompose',
-    component: Layout,
-    redirect: '/managerVipCompose/vipComposeList',
-    name: 'managerVipCompose',
-    meta: {
-      title: 'managerVipCompose',
-      icon: 'managerVipCompose',
-      name:'VIP套餐管理',
-    },
-    children: [{
-      path: 'vipComposeList',
-      component: () => import('@/views/managerVipCompose/vipComposeList'),
-      name: 'vipComposeList',
-      meta: {
-        title: 'vipComposeList',
-        name:'VIP套餐列表',
-        icon: 'managerVipCompose'
-      }
-    },
-
-    ]
-  },
-
-
-
 
 
   // {

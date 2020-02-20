@@ -9,6 +9,15 @@ export function categoryList(data) { //分类列表
   })
 }
 
+// 上传图片
+export function fileUpload(data) { //上传图片
+  return request({
+      url: 'fileUpload',
+      method: 'post',
+      data
+  })
+}
+
 // 添加分类
 export function addCategory(data) { //添加分类
   return request({
@@ -132,3 +141,70 @@ export function delVipCompose(data) { //VIP套餐删除
       params: data
   })
 }
+
+// 小说分页查询
+export function managerBookPage(data) { //小说分页查询
+  return request({
+      url: '/manager/book/page',
+      method: 'post',
+      data
+  })
+}
+
+// 保存和更新小说
+export function managerBookSave(data) { //保存和更新小说
+  return request({
+      url: '/manager/book/save',
+      method: 'post',
+      data
+  })
+}
+
+//  删除小说
+export function managerBookDelete(data) { //删除小说
+  return request({
+      url: '/manager/book/delete',
+      method: 'get',
+      params: data
+  })
+}
+
+//  获取小说全部章节列表
+export function bookContentList(data) { 
+  return request({
+      url: '/manager/book/content/page',
+      method: 'post',
+      data
+  })
+}
+
+//  获取小说章节内容
+export function managerBookContent(data) { //获取小说章节内容
+  return request({
+      url: '/manager/book/content',
+      method: 'get',
+      params: data
+  })
+}
+
+//  增加或修改章节内容
+export function managerBookContentSave(data) { //增加或修改章节内容
+  return request({
+      url: '/manager/book/content/save',
+      method: 'post',
+      data
+  })
+}
+
+//  删除章节
+export function managerBookContentDelete(data) { //删除章节
+  return request({
+      url: '/manager/book/content/delete',
+      method: 'get',
+      params: data
+  })
+}
+
+
+
+

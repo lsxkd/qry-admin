@@ -13,7 +13,6 @@ import request from '@/utils/request'
 //   })
 // }
 export function loginByUsername(username, password) {
-  console.log(username, password)
   return request.post('admin/login', {
     username: username,
     password: password

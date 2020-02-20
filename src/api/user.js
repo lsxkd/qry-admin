@@ -26,3 +26,61 @@ export function delManagers(data) { //删除管理员
       params: data
   })
 }
+
+
+// APP版本分页查询
+export function getVersionInfoList(data) { //APP版本分页查询
+  return request({
+      url: '/appversion/page',
+      method: 'post',
+      data
+  })
+}
+// 查询最新版本号
+export function getLatestVersion(data) { //查询最新版本号
+  return request({
+    url: '/appversion/latestVersion',
+    method: 'get',
+    params: data
+  })
+}
+// 查询最新版本号
+export function saveOrUpdateVersionInfo(data) { //查询最新版本号
+  return request({
+      url: '/appversion/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
+
+// 申请上架小说管理
+export function applyBookPage(data) { 
+  return request({
+      url: '/apply/book/page',
+      method: 'post',
+      data
+  })
+}
+// 申请上架小说管理  处理申请
+export function applyBookAudit(data) { 
+  return request({
+    url: '/apply/book/audit',
+    method: 'get',
+    params: data
+  })
+}
+
+// 申请上架小说管理  删除申请
+export function applyBookDelete(data) { 
+  return request({
+    url: '/apply/book/delete',
+    method: 'get',
+    params: data
+  })
+}
+
+
+
+
+
+
