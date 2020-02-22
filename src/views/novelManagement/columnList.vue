@@ -3,7 +3,7 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加分类"
+        title="添加一级栏目"
         :visible.sync="dialogTableVisible"
         width='500px'
       >
@@ -35,108 +35,94 @@
         </div>
       </el-form>
     </el-dialog>
-    <el-form  size="small" inline :model="userListPage">
-      <el-form-item label="名称:">
-        <el-input placeholder="名称" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
-      </el-form-item>
-      
-      <!-- <el-form-item label="注册时间">
-        <el-date-picker
-          v-model="registrationTime"
-          type="daterange"
-          value-format="yyyy-MM-dd"
-          @keyup.enter.native="searchBtn"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-      </!--> 
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          title="搜索"
-          style="font-size: 16px"
-          @click="searchBtn()"
-        />
-      </el-form-item>
-      <el-form-item style="margin-bottom:15px;float:right;">
-        <el-button type="primary" @click="openEditOrAdd('add')" >添加分类</el-button>
+    <el-form  size="small" inline :model="topicParentDataPage">
+      <el-form-item style="margin-bottom:15px;">
+        <el-button type="primary" @click="openEditOrAdd('add')" >添加一级栏目</el-button>
+        <el-button type="success" >刷新栏目</el-button>
       </el-form-item>
     </el-form>
     
-    <el-table :data="userList" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
-      <el-table-column align="center" label='#' :min-width="60">
-        <template slot-scope="scope">
-          {{scope.$index + 1}}
-        </template>
-      </el-table-column>
-      <el-table-column label='创建时间' :min-width="160">
-        <template slot-scope="scope">
-          <!-- {{scope.row.createDate | initTime}} -->
-          {{scope.row.createTime}}
-        </template>
-      </el-table-column>
-      <el-table-column label="名称" prop='name' :min-width="150"></el-table-column>
-      <el-table-column label='图片' :min-width="110" align="center">
-        <template slot-scope="scope">
-          <el-popover
-            placement="right"
-            title=""
-            width="300"
-            trigger="hover">
-            <img :src="scope.row.iconUrlAll" style="width:100%;height:auto;">
-            <img :src="scope.row.iconUrlAll" slot="reference" style="width:auto;height:80px;">
-          </el-popover>
-          
-        </template>
-      </el-table-column>
-      <el-table-column label="简介" prop='introduce' :min-width="150"></el-table-column>
-      <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column>
-      
-      <!-- <el-table-column label="账户状态" :min-width="150">
-        <template slot-scope="scope">
-          <span v-if="scope.row.status == 0">正常</span>
-          <span v-if="scope.row.status == 1">禁用</span>
-        </template>
-      </el-table-column> -->
-      <el-table-column align="center" fixed="right" label="操作" width="250">
-        <template slot-scope="scope">
-          <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
-          <!-- <el-button type="primary" size="small">发行记录</el-button> -->
-          <el-button type="primary" size="small" icon="el-icon-edit" @click="openEditOrAdd('edit',scope.row)">编辑</el-button>
-          <el-button type="danger" size="small" icon="el-icon-edit" @click="delConfirm(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-        @current-change="pageChange"
-        style="text-align:center;margin-top:3px"
-        background
-        layout="prev, pager, next"
-        :page-size="fishListPageLimit"
-        :current-page="userListPage.pageNum"
-        :total="total"
-      ></el-pagination>
+    <div class="splitPanes">
+      <div class="splitPanes-left">
+        <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
+          <el-submenu   v-for="(item,index) in topicParentData" :key="index" :index="String(item.id)" @click.native="handleOpenChild(item.id)" >
+            <template slot="title">
+              <div style="display:flex;justify-content: space-between;padding-right:25px;">
+                <div>
+                  <i class="el-icon-menu"></i>
+                  <span slot="title">{{item.topicName}}</span>
+                </div>
+                <div>
+                  <el-button type="text" size='mini' @click.stop="aFun">添加</el-button>
+                  <el-button type="text" size='mini' @click.stop="aFun">编辑</el-button>
+                  <el-button type="text" size='mini' @click.stop="aFun">删除</el-button>
+                </div>
+              </div>
+              
+            </template>
+            <el-menu-item-group v-if="isTopicChild">
+              <!-- <span slot="title">分组一</span> -->
+              <el-menu-item  :index="item.id+'-'+em.id" v-for="(em,indexs) in topicChildData[String(item.id)]" :key="indexs + 'a'" >
+                <div style="display:flex;justify-content: space-between;">
+                  <div> 
+                    <i class="el-icon-s-unfold"></i>
+                    <span slot="title">{{em.topicName}}</span>
+                  </div>
+                  
+                  <div>
+                    <el-button type="text" size='mini' @click.stop="aFun">编辑</el-button>
+                    <el-button type="text" size='mini' @click.stop="aFun">删除</el-button>
+                  </div>
+                  
+                </div>
+              </el-menu-item>
+              <!-- <el-menu-item index="1-2">选项2</el-menu-item> -->
+            </el-menu-item-group>
+          </el-submenu>
+          <!-- <el-menu-item index="2">
+            <i class="el-icon-menu"></i>
+            <span slot="title">导航二</span>
+          </el-menu-item>
+          <el-menu-item index="3" disabled>
+            <i class="el-icon-document"></i>
+            <span slot="title">导航三</span>
+          </el-menu-item>
+          <el-menu-item index="4">
+            <i class="el-icon-setting"></i>
+            <span slot="title">导航四</span>
+          </el-menu-item> -->
+        </el-menu>
+      </div>
+      <div class="splitPanes-right">
+        <div class="splitPanes-right-box">
+          <BannnerList></BannnerList>
+        </div>
+        
+      </div>
+    </div>
+        
   </div>
 </template>
 
 <script>
-import { categoryList,addCategory,delCategory,fileUpload } from '@/api/category.js';
+import { topicParent,topicChild,addCategory,delCategory,fileUpload } from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
+import BannnerList from './bannerList'
 export default {
-  name: 'categoryList',
+  name: 'columnList',
   directives: { elDragDialog },
+  components: { BannnerList },
   data() {
     return {
-      userList: [],
+      topicParentData: [],
+      topicChildData:{},
+      isTopicChild:false,
       fishListPageLimit:10,
       total: 1,
-      userListPage: {
+      topicParentDataPage: {
         pageNum: 1,
         pageSize: 10,
       },
@@ -153,6 +139,7 @@ export default {
         orderNum: [{ required: true, trigger: 'blur',message:'请输入排序'  }]
       },
       imgUploadSrc:'',
+      isCollapse: false,
       
     }
   },
@@ -162,9 +149,35 @@ export default {
     }
   },
   created() {
-    this.getUserList();
+    this.topicParent();
+    
   },
   methods: {
+    handleOpen(key, keyPath) {
+      console.log(key);
+    },
+    handleClose(key, keyPath) {
+      console.log(key);
+    },
+
+    handleOpenChild(id){
+      let timers = setTimeout(()=>{
+        this.topicChild(id)
+        clearTimeout(timers)
+        timers = null
+      },300)
+      
+    },
+    aFun(){
+      console.log(11111111111)
+    },
+
+
+
+
+
+
+
     handleAvatarSuccess(res, file) {
       this.imgUploadSrc = res.data.all_url
       this.dialogData.iconUrl = res.data.short_url;
@@ -202,21 +215,40 @@ export default {
       }
     },
     searchBtn(){
-      this.getUserList()
+      this.topicParentDataPage.pageNum = 1
+      this.topicParent()
     },
     pageChange (p) {
-      this.userListPage.pageNum = p
-      this.getUserList()
+      this.topicParentDataPage.pageNum = p
+      this.topicParent()
     },
-    getUserList() {
-      this.listLoading = true
-      if(!this.userListPage.name){
-        delete this.userListPage.name
+    topicParent() {
+      topicParent().then(res => {
+        this.$nextTick(() => {
+          this.topicParentData = res.data
+          
+          this.topicChild(this.topicParentData[0].id)
+          
+        })
+        
+      })
+    },
+    topicChild(id) {
+      
+      if(this.topicChildData.hasOwnProperty(id)){
+        return
       }
-      categoryList(this.userListPage).then(res => {
-        // console.log(res.data)
-        this.userList = res.data.list
-        this.total = res.data.total
+      this.isTopicChild = false
+      const data = {
+        parentId:id
+      }
+      topicChild(data).then(res => {
+        // this.$nextTick(() => {
+          this.topicChildData[String(id)] = res.data
+          console.log(this.topicChildData[String(id)])
+          this.isTopicChild = true
+        // })
+        
         
       })
     },
@@ -237,7 +269,7 @@ export default {
               this.dialogData.orderNum = ''
               this.dialogData.iconUrl = ''
               this.imgUploadSrc = ''
-              this.getUserList()
+              this.topicParent()
               this.$message({
                   type: 'success',
                   message: '添加成功!'
@@ -273,7 +305,7 @@ export default {
       }
       delCategory(data).then(res => {
         if(res.code == 200){
-              this.getUserList()
+              this.topicParent()
               this.$message({
                   type: 'success',
                   message: '删除成功!'
@@ -293,6 +325,36 @@ export default {
 </script>
 
 <style>
+.splitPanes{
+  width:100%;
+  display: flex;
+  justify-content: space-between;
+   border: 1px solid #eee;
+}
+.splitPanes-left{
+  flex: 0 0 auto;
+  width:400px;
+  background:#eef1f6;
+  min-height: 500px;
+}
+.splitPanes-right{
+  flex:1 1 auto;
+  width:calc(100% - 400px);
+}
+.splitPanes-right-box{
+  width:100%;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 400px;
+    
+  }
+.el-menu-item-group__title{
+  padding:0;
+  height:0;
+}
+.el-submenu__title i{
+  margin-top: -5px;
+}
 .radio-label {
   font-size: 14px;
   color: #606266;

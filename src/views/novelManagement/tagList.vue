@@ -3,26 +3,16 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加管理员"
+        title="添加"
         :visible.sync="dialogTableVisible"
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="用户名:" prop="username">
-          <el-input class="article-textarea" placeholder="请输入用户名" style="width:215px;" v-model.trim="dialogData.username"></el-input>
+        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="标签名称:" prop="coinComposeName">
+          <el-input class="article-textarea" placeholder="请输入标签名称" style="width:215px;" v-model.trim="dialogData.tag"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="密码:" prop="password">
-          <el-input class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="手机号:">
-          <el-input class="article-textarea" placeholder="请输入手机号" style="width:215px;" maxlength="11" v-model.trim="dialogData.mobile"></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="邮箱:">
-          <el-input class="article-textarea" placeholder="请输入邮箱" style="width:215px;"  v-model.trim="dialogData.email"></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="真实姓名:">
-          <el-input class="article-textarea" placeholder="请输入真实姓名" style="width:215px;"  v-model.trim="dialogData.realname"></el-input>
-        </el-form-item>
+        
+
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
           <el-button type="success" @click="addManagerBtn">确定</el-button>
@@ -30,16 +20,11 @@
       </el-form>
     </el-dialog>
     <el-form  size="small" inline :model="userListPage">
-      <el-form-item label="用户名:">
-        <el-input placeholder="用户名" v-model.trim="userListPage.userName" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
+      <el-form-item label="标签名称:">
+        <el-input placeholder="标签名称" v-model.trim="userListPage.tag" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
       </el-form-item>
-      <el-form-item label="手机号:">
-        <el-input placeholder="手机号" v-model.trim="userListPage.mobile" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
-      </el-form-item>
-      <el-form-item label="真实姓名:">
-        <el-input placeholder="真实姓名" v-model.trim="userListPage.realName" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
-      </el-form-item>
-      <el-form-item label="注册时间">
+      
+      <!-- <el-form-item label="注册时间">
         <el-date-picker
           v-model="registrationTime"
           type="daterange"
@@ -49,7 +34,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>
-      </el-form-item>
+      </!--> 
       <el-form-item>
         <el-button
           type="primary"
@@ -61,7 +46,7 @@
         />
       </el-form-item>
       <el-form-item style="margin-bottom:15px;float:right;">
-        <el-button type="primary" @click="openEditOrAdd('add')" >添加管理员</el-button>
+        <el-button type="primary" @click="openEditOrAdd('add')" >添加</el-button>
       </el-form-item>
     </el-form>
     
@@ -74,27 +59,18 @@
       <el-table-column label='创建时间' :min-width="160">
         <template slot-scope="scope">
           <!-- {{scope.row.createDate | initTime}} -->
-          {{scope.row.created}}
+          {{scope.row.createTime}}
         </template>
       </el-table-column>
-      <el-table-column label="用户名" prop='username' :min-width="150"></el-table-column>
-      <el-table-column label="邮箱" prop='email' :min-width="150"></el-table-column>
-      <el-table-column label="身份证号" prop='idCard' :min-width="150"></el-table-column>
-      <el-table-column label="手机号" prop='mobile' :min-width="150"></el-table-column>
-      <el-table-column label="姓名" prop='realName' :min-width="150"></el-table-column>
-      <el-table-column label="qq" prop='qq' :min-width="150"></el-table-column>
-      <el-table-column label="微信" prop='wechat' :min-width="150"></el-table-column>
-      <el-table-column label="账户状态" :min-width="150">
+      <el-table-column label="标签名称" prop='tag' :min-width="150"></el-table-column>
+      <!-- <el-table-column label="账户状态" :min-width="150">
         <template slot-scope="scope">
           <span v-if="scope.row.status == 0">正常</span>
           <span v-if="scope.row.status == 1">禁用</span>
         </template>
-      </el-table-column>
-      <!-- <el-table-column label="余额" prop='coinNum' :min-width="150"></el-table-column> -->
+      </el-table-column> -->
       <el-table-column align="center" fixed="right" label="操作" width="250">
         <template slot-scope="scope">
-          <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
-          <!-- <el-button type="primary" size="small">发行记录</el-button> -->
           <el-button type="primary" size="small" icon="el-icon-edit" @click="openEditOrAdd('edit',scope.row)">编辑</el-button>
           <el-button type="danger" size="small" icon="el-icon-edit" @click="delConfirm(scope.row.id)">删除</el-button>
         </template>
@@ -113,11 +89,11 @@
 </template>
 
 <script>
-import { managersList,addManagers,delManagers } from '@/api/user.js';
+import { tagList,addTag,delTag } from '@/api/category.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 export default {
-  name: 'managersList',
+  name: 'tagList',
   directives: { elDragDialog },
   data() {
     return {
@@ -127,41 +103,33 @@ export default {
       userListPage: {
         pageNum: 1,
         pageSize: 10,
-        // startTime:'',
-        // endTime:'',
-        // username:'',//账号
-        // status:'' , //状态0正常1拉黑
       },
       registrationTime:[],
       dialogTableVisible:false,
       dialogData:{
-        username:'',
-        password:'',
+        tag:'',
       },
       dialogRules: {
-        username: [{ required: true, trigger: 'blur',message:'请输入用户名' }],
-        password: [{ required: true, trigger: 'blur',message:'请输入密码'  }]
+        tag: [{ required: true, trigger: 'blur',message:'请输入标签名称' }],
       },
+      
     }
   },
   created() {
     this.getUserList();
   },
   methods: {
-    searchBtn(){
-      this.userListPage.pageNum = 1
-      this.getUserList()
-    },
+
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
       if(flag == 'edit'){
         this.dialogData.id = row.id
-        this.dialogData.username = row.username
-        this.dialogData.password = row.password
-        this.dialogData.mobile = row.mobile
-        this.dialogData.realname = row.realname
-        this.dialogData.email = row.email
+        this.dialogData.tag = row.tag
       }
+    },
+    searchBtn(){
+      this.userListPage.pageNum = 1
+      this.getUserList()
     },
     pageChange (p) {
       this.userListPage.pageNum = p
@@ -169,7 +137,10 @@ export default {
     },
     getUserList() {
       this.listLoading = true
-      managersList(this.userListPage).then(res => {
+      if(!this.userListPage.tag){
+        delete this.userListPage.tag
+      }
+      tagList(this.userListPage).then(res => {
         // console.log(res.data)
         this.userList = res.data.list
         this.total = res.data.total
@@ -179,7 +150,7 @@ export default {
     addManagerBtn(){
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          addManagers(this.dialogData).then(res => {
+          addTag(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
               this.dialogData.username = ''
@@ -187,7 +158,7 @@ export default {
               this.getUserList()
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: '成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -216,9 +187,9 @@ export default {
     },
     delManagers(id){
       const data = {
-        adminUserId:id
+        id:id
       }
-      delManagers(data).then(res => {
+      delTag(data).then(res => {
         if(res.code == 200){
               this.getUserList()
               this.$message({
@@ -257,4 +228,5 @@ export default {
   background: #f0f9eb;
 } */
 </style>
+
 

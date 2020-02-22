@@ -11,13 +11,13 @@
         <el-row>
           <el-col :sm="24" :md="12">
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="书名:" prop="name">
-              <el-input class="article-textarea" placeholder="请输入书名" style="width:215px;" v-model.trim="dialogData.name"></el-input>
+              <el-input class="article-textarea" placeholder="请输入书名" maxlength="20" style="width:215px;" v-model.trim="dialogData.name"></el-input>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="简介:" prop="introduction">
-              <el-input type="textarea"  :rows="2"  placeholder="请输入简介" style="width:215px;"  v-model.trim="dialogData.introduction"></el-input>
+              <el-input type="textarea"  :rows="2"  placeholder="请输入简介" maxlength="1000" style="width:215px;"  v-model.trim="dialogData.introduction"></el-input>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="作者:" prop="author">
-              <el-input class="article-textarea" placeholder="请输入作者" style="width:215px;"  v-model.trim="dialogData.author"></el-input>
+              <el-input class="article-textarea" placeholder="请输入作者" maxlength="30" style="width:215px;"  v-model.trim="dialogData.author"></el-input>
             </el-form-item>
             
             <el-form-item style="margin-bottom: 10px;" label-width="120px" label="封面图片:" prop="coverImgUrl">
@@ -33,7 +33,7 @@
               </el-upload>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="字数:" prop="typeNum">
-              <el-input class="article-textarea" placeholder="请输入字数" style="width:215px;"  v-model.trim="dialogData.typeNum"></el-input>
+              <el-input class="article-textarea" placeholder="请输入字数" maxlength="11" style="width:215px;"  v-model.trim="dialogData.typeNum"></el-input>
             </el-form-item>
             
           </el-col>
@@ -72,17 +72,17 @@
               </el-select>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评分:" prop="score">
-              <el-input class="article-textarea" placeholder="请输入评分" style="width:215px;"  v-model.trim="dialogData.score"></el-input>
+              <el-input class="article-textarea" placeholder="请输入评分" maxlength="3" style="width:215px;"  v-model.trim="dialogData.score"></el-input>
             </el-form-item>
             
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="收藏数量:" prop="collectionNum">
-              <el-input class="article-textarea" placeholder="请输入收藏数量" style="width:215px;"  v-model.trim="dialogData.collectionNum"></el-input>
+              <el-input class="article-textarea" placeholder="请输入收藏数量" maxlength="11" style="width:215px;"  v-model.trim="dialogData.collectionNum"></el-input>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评论数:" prop="commentNum">
-              <el-input class="article-textarea" placeholder="请输入评论数" style="width:215px;"  v-model.trim="dialogData.commentNum"></el-input>
+              <el-input class="article-textarea" placeholder="请输入评论数" maxlength="11" style="width:215px;"  v-model.trim="dialogData.commentNum"></el-input>
             </el-form-item>
             
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="总推荐(点击量):" prop="readNum">
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" maxlength="11" label="总推荐(点击量):" prop="readNum">
               <el-input class="article-textarea" placeholder="请输入总推荐(点击量)" style="width:215px;"  v-model.trim="dialogData.readNum"></el-input>
             </el-form-item>
             <!-- <el-form-item style="margin-bottom: 20px;" label-width="120px" label="创建日期:" prop="createTime">
@@ -245,7 +245,7 @@ import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
 export default {
-  name: 'managerBookPage',
+  name: 'novelManagementList',
   directives: { elDragDialog },
   data() {
     return {
@@ -380,7 +380,8 @@ export default {
       
       // delete this.dialogData.createTime
       if(flag == 'edit'){
-        this.dialogData = row
+        let rowData = JSON.parse(JSON.stringify(row))
+        this.dialogData = rowData
         
         for(let key in this.dialogData){
           if(this.dialogData[key] == null){
@@ -402,7 +403,7 @@ export default {
           })
           // this.dialogData.tagsData = JSON.parse(JSON.stringify(this.dialogData.tagsData))
         }else{
-          this.dialogData.tagsData = ''
+          this.dialogData.tagsData = []
         }
         
         console.log(this.tagListData)
@@ -421,6 +422,7 @@ export default {
       this.dialogTableVisible = true
     },
     searchBtn(){
+      this.userListPage.pageNum = 1
       this.managerBookPage()
     },
     pageChange (p) {

@@ -37,7 +37,7 @@
           size="mini"
           title="搜索"
           style="font-size: 16px"
-          @click="applyBookPage()"
+          @click="searchBtn()"
         />
       </el-form-item>
       
@@ -92,7 +92,7 @@ import { applyBookPage,applyBookAudit,applyBookDelete } from '@/api/user.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 export default {
-  name: 'applyBookPage',
+  name: 'applyNovelManagement',
   directives: { elDragDialog },
   data() {
     return {
@@ -119,6 +119,10 @@ export default {
     this.applyBookPage();
   },
   methods: {
+    searchBtn(){
+      this.dialogData.pageNum = 1
+      this.applyBookPage()
+    },
     openEditOrAdd(id){
       this.dialogTableVisible = true
       this.dialogData.id = id

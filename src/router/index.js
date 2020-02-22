@@ -106,12 +106,24 @@ export const constantRouterMap = [
     children: [
       {
         path: 'classifiedList',
-        component: () => import('@/views/managerClassified/classifiedList'),
+        component: () => import('@/views/novelManagement/classifiedList'),
         name: 'classifiedList',
         meta: {
           title: 'classifiedList',
           name:'分类列表',
+          noCache: false,
           icon: 'classification'
+        }
+      },
+      {
+        path: 'columnList',
+        component: () => import('@/views/novelManagement/columnList'),
+        name: 'columnList',
+        meta: {
+          title: 'columnList',
+          name:'栏目管理',
+          noCache: false,
+          icon: 'columnList'
         }
       },
       {
@@ -121,7 +133,8 @@ export const constantRouterMap = [
         meta: {
           title: 'novelManagementList',
           name:'小说列表',
-          icon: 'applyNovelManagement'
+          icon: 'applyNovelManagement',
+          noCache: true,
         }
       },
       {
@@ -131,7 +144,7 @@ export const constantRouterMap = [
         meta: {
           title: 'novelChapterList',
           name:'小说章节列表',
-          noCache: true,
+          noCache: false,
           // icon: 'applyNovelManagement'
         }, 
         hidden: true 
@@ -143,14 +156,14 @@ export const constantRouterMap = [
         meta: {
           title: 'novelChapterContent',
           name:'小说章节内容编辑',
-          noCache: true,
+          noCache: false,
           // icon: 'applyNovelManagement'novelChapterContent
         }, 
         hidden: true 
       },
       {
         path: 'tagList',
-        component: () => import('@/views/managerTag/tagList'),
+        component: () => import('@/views/novelManagement/tagList'),
         name: 'tagList',
         meta: {
           title: 'tagList',
@@ -159,8 +172,18 @@ export const constantRouterMap = [
         }
       },
       {
+        path: 'bannerList',
+        component: () => import('@/views/novelManagement/bannerList'),
+        name: 'bannerList',
+        meta: {
+          title: 'bannerList',
+          name:'标签列表',
+          icon: 'bannerList'
+        }
+      },
+      {
         path: 'applyNovelManagement',
-        component: () => import('@/views/applyNovelManagement/applyNovelManagement'),
+        component: () => import('@/views/novelManagement/applyNovelManagement'),
         name: 'applyNovelManagement',
         meta: {
           title: 'applyNovelManagement',

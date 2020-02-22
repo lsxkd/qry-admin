@@ -16,11 +16,14 @@ export default {
 
     managerClassified:'分类管理',
     classifiedList:'分类列表',
+    columnList:'栏目管理',
 
     novelManagement:'小说管理',
     novelManagementList:'小说列表',
     novelChapterList:'小说章节列表',
     novelChapterContent:'小说章节内容编辑',
+
+    bannerList:'banner管理',
     
     
     memberCenter:'会员中心管理',

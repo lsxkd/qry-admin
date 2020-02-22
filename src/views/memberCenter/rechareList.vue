@@ -110,7 +110,7 @@ import { coincomposeList,addCoincompose,delCoincompose } from '@/api/category.js
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 export default {
-  name: 'managersList',
+  name: 'rechareList',
   directives: { elDragDialog },
   data() {
     return {
@@ -153,6 +153,7 @@ export default {
       }
     },
     searchBtn(){
+      this.userListPage.pageNum = 1
       this.getUserList()
     },
     pageChange (p) {

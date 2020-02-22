@@ -33,7 +33,7 @@
         <el-input v-model="pageInfo.appVersion" placeholder="版本号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getlist">查询</el-button>
+        <el-button type="primary" @click="searchBtn">查询</el-button>
       </el-form-item>
       <el-button type="primary" style="margin-bottom:10px;float:right;margin-left:10px;" @click="getNewVersion">{{getNV ?'获取版本列表': '获取最新版本信息'}}</el-button>
       <el-button type="primary" style="margin-bottom:10px;float:right;" @click="add('','add')">添加版本信息</el-button>
@@ -180,6 +180,7 @@ import {
 } from '@/api/user'
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 export default {
+  name:'appManagement',
     directives: { elDragDialog },
   data () {
     return {
@@ -281,6 +282,10 @@ export default {
     this.getlist()
   },
   methods: {
+    searchBtn(){
+      this.pageInfo.pageNum  = 1
+      this.getlist()
+    },
     openDetails(data){
       this.dialogVisibleGroup = true
       this.detailsData = data

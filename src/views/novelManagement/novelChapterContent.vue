@@ -94,7 +94,7 @@ import MDinput from '@/components/MDinput'
 import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，element-ui的select不能满足所有需求
 import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
 export default {
-  name: 'novelChapterList',
+  name: 'novelChapterContent',
   directives: { elDragDialog },
   components: {  MDinput,  Multiselect, Sticky, },
   data() {

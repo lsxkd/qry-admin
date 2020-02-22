@@ -205,6 +205,57 @@ export function managerBookContentDelete(data) { //删除章节
   })
 }
 
+//  Banner分页查询
+export function topicBannerPage(data) { //Banner分页查询
+  return request({
+      url: '/topic/banner/page',
+      method: 'post',
+      data
+  })
+}
+
+//  新增及修改Banner
+export function topicBannerSave(data) { //新增及修改Banner
+  return request({
+      url: '/topic/banner/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
 
 
+//  栏目顶级
+export function topicParent(data) { //栏目顶级
+  return request({
+      url: '/topic/parent',
+      method: 'post',
+      data
+  })
+}
 
+//  新增栏目管理
+export function topicSaveOrUpdate(data) { //新增栏目管理
+  return request({
+      url: '/topic/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
+
+//  二级顶级
+export function topicChild(data) { //二级顶级
+  return request({
+      url: '/topic/child',
+      method: 'get',
+      params: data
+  })
+}
+
+//删除栏目
+export function topicDelete(data) { //删除栏目
+  return request({
+      url: '/topic/delete',
+      method: 'get',
+      params: data
+  })
+}

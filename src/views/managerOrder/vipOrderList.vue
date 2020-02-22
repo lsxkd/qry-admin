@@ -121,6 +121,7 @@ export default {
   methods: {
 
     searchBtn(){
+      this.userListPage.pageNum = 1
       this.getUserList()
     },
     pageChange (p) {
