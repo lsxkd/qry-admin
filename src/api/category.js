@@ -223,6 +223,23 @@ export function topicBannerSave(data) { //新增及修改Banner
   })
 }
 
+//  删除Banner
+export function topicBannerDelete(data) { //删除Banner
+  return request({
+      url: '/topic/banner/delete',
+      method: 'get',
+      params: data
+  })
+}
+
+//  栏目树所有节点
+export function topicAllTree(data) { //栏目树所有节点
+  return request({
+      url: '/topic/allTree',
+      method: 'get',
+      params: data
+  })
+}
 
 //  栏目顶级
 export function topicParent(data) { //栏目顶级

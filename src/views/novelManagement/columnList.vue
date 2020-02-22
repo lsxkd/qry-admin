@@ -3,48 +3,53 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加一级栏目"
+        title="添加/编辑栏目"
         :visible.sync="dialogTableVisible"
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="名称:" prop="name">
-          <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" v-model.trim="dialogData.name"></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="简介:" prop="introduce">
-          <el-input type="textarea"  :rows="2"  placeholder="请输入简介" style="width:215px;"  v-model.trim="dialogData.introduce"></el-input>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="栏目名称:" prop="topicName">
+          <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" v-model.trim="dialogData.topicName"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="排序:" prop="orderNum">
           <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="图片:">
-          <el-upload
-            class="avatar-uploader"
-            :action="FileUpload"
-            :show-file-list="false"
-            :headers="{'Authorization':tokenData}"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="是否启用:" prop="enable">
+          <el-select v-model="dialogData.enable" clearable placeholder="请选择" style="width:215px;">
+            <el-option label="否" :value="0"> </el-option>
+            <el-option label="是" :value="1"> </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="内容类型:" prop="contentType" v-if="columnOneOrTwo == 2">
+          <el-select v-model="dialogData.contentType" clearable placeholder="请选择" style="width:215px;">
+            <el-option label="小说" :value="1"> </el-option>
+            <el-option label="banner" :value="2"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="展示类型:" prop="showType" v-if="columnOneOrTwo == 2&&dialogData.contentType==1">
+          <el-select v-model="dialogData.showType" clearable placeholder="请选择" style="width:215px;">
+            <el-option label="一行" :value="1"> </el-option>
+            <el-option label="两行" :value="2"> </el-option>
+            <el-option label="直列" :value="3"> </el-option>
+          </el-select>
         </el-form-item>
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="success" @click="addManagerBtn">确定</el-button>
+          <el-button type="success" @click="topicSaveOrUpdate">确定</el-button>
         </div>
       </el-form>
     </el-dialog>
-    <el-form  size="small" inline :model="topicParentDataPage">
+    <el-form  size="small" inline>
       <el-form-item style="margin-bottom:15px;">
         <el-button type="primary" @click="openEditOrAdd('add')" >添加一级栏目</el-button>
-        <el-button type="success" >刷新栏目</el-button>
+        <el-button type="success" @click="refreshBtn">刷新栏目</el-button>
       </el-form-item>
     </el-form>
     
     <div class="splitPanes">
       <div class="splitPanes-left">
-        <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
+        <el-menu :default-active="activeMenuId" :default-openeds="activeSubMenuId" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
           <el-submenu   v-for="(item,index) in topicParentData" :key="index" :index="String(item.id)" @click.native="handleOpenChild(item.id)" >
             <template slot="title">
               <div style="display:flex;justify-content: space-between;padding-right:25px;">
@@ -53,16 +58,16 @@
                   <span slot="title">{{item.topicName}}</span>
                 </div>
                 <div>
-                  <el-button type="text" size='mini' @click.stop="aFun">添加</el-button>
-                  <el-button type="text" size='mini' @click.stop="aFun">编辑</el-button>
-                  <el-button type="text" size='mini' @click.stop="aFun">删除</el-button>
+                  <el-button type="text" size='mini' @click.stop="openEditOrAdd('add',item,2)">添加</el-button>
+                  <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',item)">编辑</el-button>
+                  <el-button type="text" size='mini' @click.stop="delConfirm(item.id)">删除</el-button>
                 </div>
               </div>
               
             </template>
             <el-menu-item-group v-if="isTopicChild">
               <!-- <span slot="title">分组一</span> -->
-              <el-menu-item  :index="item.id+'-'+em.id" v-for="(em,indexs) in topicChildData[String(item.id)]" :key="indexs + 'a'" >
+              <el-menu-item  :index="item.id+'-'+em.id" v-for="(em,indexs) in topicChildData[String(item.id)]" :key="indexs + 'a'" @click="menuItemBtn(em.id,em.contentType)">
                 <div style="display:flex;justify-content: space-between;">
                   <div> 
                     <i class="el-icon-s-unfold"></i>
@@ -70,34 +75,23 @@
                   </div>
                   
                   <div>
-                    <el-button type="text" size='mini' @click.stop="aFun">编辑</el-button>
-                    <el-button type="text" size='mini' @click.stop="aFun">删除</el-button>
+                    <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',em,2)">编辑</el-button>
+                    <el-button type="text" size='mini' @click.stop="delConfirm(em.id)">删除</el-button>
                   </div>
                   
                 </div>
               </el-menu-item>
-              <!-- <el-menu-item index="1-2">选项2</el-menu-item> -->
             </el-menu-item-group>
           </el-submenu>
-          <!-- <el-menu-item index="2">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3" disabled>
-            <i class="el-icon-document"></i>
-            <span slot="title">导航三</span>
-          </el-menu-item>
-          <el-menu-item index="4">
-            <i class="el-icon-setting"></i>
-            <span slot="title">导航四</span>
-          </el-menu-item> -->
         </el-menu>
       </div>
       <div class="splitPanes-right">
-        <div class="splitPanes-right-box">
-          <BannnerList></BannnerList>
+        <div class="splitPanes-right-box" v-if="contentTypeFlag == 1" :ss='columnIds'>
+          <ColumnBookedit  :columnIds='columnIds'></ColumnBookedit>
         </div>
-        
+        <div class="splitPanes-right-box" v-if="contentTypeFlag == 2" :ss='columnIds'>
+          <BannnerList  :columnIds='columnIds'></BannnerList>
+        </div>
       </div>
     </div>
         
@@ -105,42 +99,45 @@
 </template>
 
 <script>
-import { topicParent,topicChild,addCategory,delCategory,fileUpload } from '@/api/category.js';
+import { topicAllTree,topicParent,topicChild,topicSaveOrUpdate,topicDelete,fileUpload } from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
 import BannnerList from './bannerList'
+import ColumnBookedit from './columnBookedit'
+
 export default {
   name: 'columnList',
   directives: { elDragDialog },
-  components: { BannnerList },
+  components: { BannnerList,ColumnBookedit },
   data() {
     return {
       topicParentData: [],
       topicChildData:{},
       isTopicChild:false,
-      fishListPageLimit:10,
-      total: 1,
-      topicParentDataPage: {
-        pageNum: 1,
-        pageSize: 10,
-      },
-      registrationTime:[],
       dialogTableVisible:false,
       dialogData:{
-        name:'',
-        introduce:'',
-        orderNum:''
+        topicName:'',
+        enable:'',
+        orderNum:'',
+        showType:'',
+        contentType:''
       },
       dialogRules: {
-        name: [{ required: true, trigger: 'blur',message:'请输入名称' }],
-        introduce: [{ required: true, trigger: 'blur',message:'请输入简介'  }],
-        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序'  }]
+        topicName: [{ required: true, trigger: 'blur',message:'请输入栏目名称' }],
+        enable: [{ required: true, trigger: 'blur',message:'请选择是否启用'  }],
+        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序'  }],
+        contentType: [{ required: true, trigger: 'blur',message:'请选择内容类型'  }],
+        showType: [{ required: true, trigger: 'blur',message:'请选择展示类型'  }],
       },
       imgUploadSrc:'',
       isCollapse: false,
-      
+      contentTypeFlag:'',
+      columnIds:'',
+      activeMenuId:'',
+      activeSubMenuId:[],
+      columnOneOrTwo:1,//添加编辑是一级还是二级栏目，1是一级，2是二级
     }
   },
   computed: {
@@ -150,14 +147,26 @@ export default {
   },
   created() {
     this.topicParent();
+    this.topicAllTree()
     
   },
   methods: {
+    refreshBtn(){
+      this.topicParentData = []
+      this.topicChildData = {}
+      this.topicParent();
+    },
+    menuItemBtn(id,contentType){
+      // console.log(id)
+      // console.log(contentType)
+      this.columnIds = id
+      this.contentTypeFlag = contentType
+    },
     handleOpen(key, keyPath) {
-      console.log(key);
+      // console.log(key);
     },
     handleClose(key, keyPath) {
-      console.log(key);
+      // console.log(key);
     },
 
     handleOpenChild(id){
@@ -168,59 +177,50 @@ export default {
       },300)
       
     },
-    aFun(){
-      console.log(11111111111)
-    },
 
 
-
-
-
-
-
-    handleAvatarSuccess(res, file) {
-      this.imgUploadSrc = res.data.all_url
-      this.dialogData.iconUrl = res.data.short_url;
-    },
-    beforeAvatarUpload(file) {
-      var testmsg = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const isJPG = testmsg == "jpg" || testmsg == "JPG" || testmsg == "png" || testmsg == "PNG" || testmsg == "bpm" || testmsg == "JPEG" || testmsg == "jpeg" || testmsg == "BPM"
-      const isLt2M = file.size / 1024 / 1024 < 0.4;
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 jpg,png,bpm 格式!');
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 400kb!');
-      }
-      return isJPG && isLt2M;
-    },
-    openEditOrAdd(flag,row){
+    openEditOrAdd(flag,row,columnOneOrTwos){
       this.dialogTableVisible = true
+      
+      this.columnOneOrTwo = columnOneOrTwos
       console.log(row)
       if(flag == 'edit'){
         this.dialogData.id = row.id
-        this.dialogData.name = row.name
-        this.dialogData.introduce = row.introduce
+        this.dialogData.topicName = row.topicName
+        this.dialogData.enable = row.enable
         this.dialogData.orderNum = row.orderNum
-        this.dialogData.iconUrl = row.iconUrl
-        this.imgUploadSrc = row.iconUrlAll
+        if(columnOneOrTwos == 2){
+          this.dialogData.contentType = row.contentType
+          this.dialogData.showType = row.showType
+          this.dialogData.parentId = row.parentId
+        }else{
+          this.dialogData.parentId = -1
+          delete this.dialogData.contentType
+          delete this.dialogData.showType
+        }
       }else{
-        this.dialogData.id = ''
-        this.dialogData.name = ''
-        this.dialogData.introduce = ''
+        delete this.dialogData.id
+        this.dialogData.topicName = ''
+        this.dialogData.enable = ''
         this.dialogData.orderNum = ''
-        this.dialogData.iconUrl = ''
-        this.imgUploadSrc = ''
+        if(columnOneOrTwos == 2){
+          this.dialogData.contentType = ''
+          this.dialogData.showType = ''
+          this.dialogData.parentId = row.id
+        }else{
+          this.dialogData.parentId = -1
+          delete this.dialogData.contentType
+          delete this.dialogData.showType
+        }
       }
     },
-    searchBtn(){
-      this.topicParentDataPage.pageNum = 1
-      this.topicParent()
-    },
-    pageChange (p) {
-      this.topicParentDataPage.pageNum = p
-      this.topicParent()
+    topicAllTree() {
+      topicAllTree().then(res => {
+        this.$nextTick(() => {
+          this.topicAllTreeData = res.data          
+        })
+        
+      })
     },
     topicParent() {
       topicParent().then(res => {
@@ -252,23 +252,17 @@ export default {
         
       })
     },
-    addManagerBtn(){
+    topicSaveOrUpdate(){
       
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          if(this.dialogData.iconUrl == ''){
-            this.$message.error('请上传分类图片！');
-            return
-          }
-          addCategory(this.dialogData).then(res => {
+          topicSaveOrUpdate(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.id = ''
-              this.dialogData.name = ''
-              this.dialogData.introduce = ''
+              delete this.dialogData.id
+              this.dialogData.topicName = ''
+              this.dialogData.enable = ''
               this.dialogData.orderNum = ''
-              this.dialogData.iconUrl = ''
-              this.imgUploadSrc = ''
               this.topicParent()
               this.$message({
                   type: 'success',
@@ -303,7 +297,7 @@ export default {
       const data = {
         id:id
       }
-      delCategory(data).then(res => {
+      topicDelete(data).then(res => {
         if(res.code == 200){
               this.topicParent()
               this.$message({

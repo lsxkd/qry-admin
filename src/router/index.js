@@ -171,16 +171,16 @@ export const constantRouterMap = [
           icon: 'managerTag'
         }
       },
-      {
-        path: 'bannerList',
-        component: () => import('@/views/novelManagement/bannerList'),
-        name: 'bannerList',
-        meta: {
-          title: 'bannerList',
-          name:'标签列表',
-          icon: 'bannerList'
-        }
-      },
+      // {
+      //   path: 'bannerList',
+      //   component: () => import('@/views/novelManagement/bannerList'),
+      //   name: 'bannerList',
+      //   meta: {
+      //     title: 'bannerList',
+      //     name:'banner列表',
+      //     icon: 'bannerList'
+      //   }
+      // },
       {
         path: 'applyNovelManagement',
         component: () => import('@/views/novelManagement/applyNovelManagement'),

@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { topicBannerPage,topicBannerSave,delCategory,fileUpload,managerBookPage  } from '@/api/category.js';
+import { topicBannerPage,topicBannerSave,topicBannerDelete,fileUpload,managerBookPage  } from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
@@ -131,6 +131,12 @@ import { getToken } from '@/utils/auth'
 export default {
   name: 'bannerList',
   directives: { elDragDialog },
+  props:{
+    columnIds: {
+      type: Number,
+      default: ''
+    },
+  },
   data() {
     return {
       topicBannerList: [],
@@ -168,12 +174,23 @@ export default {
       managerBookPageData:[],
     }
   },
+  watch: {
+    columnIds(val){
+      console.log(val)
+      this.dialogData.topicId = val
+      this.topicBannerListPage.topicId = val
+      this.topicBannerPage();
+    },
+  },
   computed: {
     tokenData(){
       return getToken()
     }
   },
   created() {
+    this.dialogData.topicId = this.columnIds
+    this.topicBannerListPage.topicId = this.columnIds
+    console.log(this.topicBannerListPage)
     this.topicBannerPage();
     this.managerBookPage()
   },
@@ -245,7 +262,7 @@ export default {
         this.dialogData.id = ''
         this.dialogData.bannerUrl = ''
         this.imgUploadSrc = ''
-        delete this.dialogData.topicId 
+        this.dialogData.topicId = this.columnIds
       }
     },
     searchBtn(){
@@ -311,7 +328,7 @@ export default {
       const data = {
         id:id
       }
-      delCategory(data).then(res => {
+      topicBannerDelete(data).then(res => {
         if(res.code == 200){
               this.topicBannerPage()
               this.$message({
