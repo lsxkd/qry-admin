@@ -94,8 +94,13 @@
         <div class="splitPanes-right-box" v-if="contentTypeFlag == 1" :ss='columnIds'>
           <ColumnBookedit  :columnIds='columnIds'></ColumnBookedit>
         </div>
-        <div class="splitPanes-right-box" v-if="contentTypeFlag == 2" :ss='columnIds'>
+        <div class="splitPanes-right-box" v-else-if="contentTypeFlag == 2" :ss='columnIds'>
           <BannnerList  :columnIds='columnIds'></BannnerList>
+        </div>
+        <div class="splitPanes-right-box" v-else>
+          <div class="no-data">
+            暂无内容，请选择左侧要修改的内容！
+          </div>
         </div>
       </div>
     </div>
@@ -337,6 +342,15 @@ export default {
 </script>
 
 <style>
+.no-data{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width:100%;
+  padding-top:50px;
+  color:#999;
+  font-size: 12px;
+}
 .el-select-dropdown__list{
   padding-bottom:17px;
 }
@@ -421,5 +435,6 @@ export default {
     height: 178px;
     display: block;
   }
+
 </style>
 
