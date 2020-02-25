@@ -221,7 +221,6 @@ export default {
       this.topicBookPage();
     },
     topicBookPageData(val){
-      console.log(1222222222222222222222222222)
       console.log(val)
     }
   },

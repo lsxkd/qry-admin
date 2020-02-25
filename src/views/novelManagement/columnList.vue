@@ -22,16 +22,16 @@
         </el-form-item>
 
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="内容类型:" prop="contentType" v-if="columnOneOrTwo == 2">
-          <el-select v-model="dialogData.contentType" clearable placeholder="请选择" style="width:215px;">
-            <el-option label="小说" :value="1"> </el-option>
-            <el-option label="banner" :value="2"> </el-option>
+          <el-select v-model="dialogData.contentType" @change="selectChange" clearable placeholder="请选择" style="width:215px;">
+            <el-option label="小说" value="1"> </el-option>
+            <el-option label="banner" value="2"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="展示类型:" prop="showType" v-if="columnOneOrTwo == 2&&dialogData.contentType==1">
-          <el-select v-model="dialogData.showType" clearable placeholder="请选择" style="width:215px;">
-            <el-option label="一行" :value="1"> </el-option>
-            <el-option label="两行" :value="2"> </el-option>
-            <el-option label="直列" :value="3"> </el-option>
+          <el-select v-model="dialogData.showType" @change="selectChange" clearable placeholder="请选择" style="width:215px;">
+            <el-option label="一行" value="1"> </el-option>
+            <el-option label="两行" value="2"> </el-option>
+            <el-option label="直列" value="3"> </el-option>
           </el-select>
         </el-form-item>
         <div style="text-align:center;">
@@ -152,6 +152,9 @@ export default {
     
   },
   methods: {
+    selectChange(val){
+      this.$forceUpdate();
+    },
     refreshBtn(){
       // this.topicParentData = []
       // this.topicChildData = {}
@@ -193,8 +196,8 @@ export default {
         this.dialogData.enable = String(row.enable)
         this.dialogData.orderNum = row.orderNum
         if(columnOneOrTwos == 2){
-          this.dialogData.contentType = row.contentType
-          this.dialogData.showType = row.showType
+          this.dialogData.contentType = String(row.contentType)
+          this.dialogData.showType = String(row.showType)
           this.dialogData.parentId = row.parentId
         }else{
           this.dialogData.parentId = -1
