@@ -276,3 +276,59 @@ export function topicDelete(data) { //删除栏目
       params: data
   })
 }
+
+//  TopicBook分页查询
+export function topicBookList(data) { //TopicBook分页查询
+  return request({
+      url: '/topic/book/page',
+      method: 'post',
+      data
+  })
+}
+
+//TopicBook不分页查询
+export function topicBookPage(data) { //TopicBook不分页查询
+  return request({
+      url: '/topic/book/list',
+      method: 'get',
+      params: data
+  })
+}
+
+//  新增TopicBook
+export function topicBookSaveOrUpdate(data) { //新增TopicBook
+  return request({
+      url: '/topic/book/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
+
+//  批量保存书本
+export function topicBookSaveBacth(data) { //批量保存书本
+  return request({
+      url: '/topic/book/saveBacth',
+      method: 'post',
+      data
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -16,8 +16,8 @@
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="是否启用:" prop="enable">
           <el-select v-model="dialogData.enable" clearable placeholder="请选择" style="width:215px;">
-            <el-option label="否" :value="0"> </el-option>
-            <el-option label="是" :value="1"> </el-option>
+            <el-option label="否" value="0"> </el-option>
+            <el-option label="是" value="1"> </el-option>
           </el-select>
         </el-form-item>
 
@@ -50,7 +50,7 @@
     <div class="splitPanes">
       <div class="splitPanes-left">
         <el-menu :default-active="activeMenuId" :default-openeds="activeSubMenuId" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse" unique-opened>
-          <el-submenu   v-for="(item,index) in topicParentData" :key="index" :index="String(item.id)" @click.native="handleOpenChild(item.id)" >
+          <el-submenu   v-for="(item,index) in topicAllTreeData" :key="index" :index="String(item.id)"  >
             <template slot="title">
               <div style="display:flex;justify-content: space-between;padding-right:25px;">
                 <div>
@@ -65,9 +65,9 @@
               </div>
               
             </template>
-            <el-menu-item-group v-if="isTopicChild">
+            <el-menu-item-group>
               <!-- <span slot="title">分组一</span> -->
-              <el-menu-item  :index="item.id+'-'+em.id" v-for="(em,indexs) in topicChildData[String(item.id)]" :key="indexs + 'a'" @click="menuItemBtn(em.id,em.contentType)">
+              <el-menu-item  :index="item.id+'-'+em.id" v-for="(em,indexs) in item.childs" :key="indexs + 'a'" @click="menuItemBtn(em.id,em.contentType)">
                 <div style="display:flex;justify-content: space-between;">
                   <div> 
                     <i class="el-icon-s-unfold"></i>
@@ -115,6 +115,7 @@ export default {
     return {
       topicParentData: [],
       topicChildData:{},
+      topicAllTreeData:[],
       isTopicChild:false,
       dialogTableVisible:false,
       dialogData:{
@@ -146,15 +147,17 @@ export default {
     }
   },
   created() {
-    this.topicParent();
+    // this.topicParent();
     this.topicAllTree()
     
   },
   methods: {
     refreshBtn(){
-      this.topicParentData = []
-      this.topicChildData = {}
-      this.topicParent();
+      // this.topicParentData = []
+      // this.topicChildData = {}
+      // this.topicParent();
+
+      this.topicAllTree()
     },
     menuItemBtn(id,contentType){
       // console.log(id)
@@ -187,7 +190,7 @@ export default {
       if(flag == 'edit'){
         this.dialogData.id = row.id
         this.dialogData.topicName = row.topicName
-        this.dialogData.enable = row.enable
+        this.dialogData.enable = String(row.enable)
         this.dialogData.orderNum = row.orderNum
         if(columnOneOrTwos == 2){
           this.dialogData.contentType = row.contentType
@@ -195,8 +198,8 @@ export default {
           this.dialogData.parentId = row.parentId
         }else{
           this.dialogData.parentId = -1
-          delete this.dialogData.contentType
-          delete this.dialogData.showType
+          this.dialogData.contentType = ''
+          this.dialogData.showType = ''
         }
       }else{
         delete this.dialogData.id
@@ -209,8 +212,8 @@ export default {
           this.dialogData.parentId = row.id
         }else{
           this.dialogData.parentId = -1
-          delete this.dialogData.contentType
-          delete this.dialogData.showType
+          this.dialogData.contentType = ''
+          this.dialogData.showType = ''
         }
       }
     },
@@ -253,7 +256,14 @@ export default {
       })
     },
     topicSaveOrUpdate(){
-      
+      const data = {}
+      for(let key in this.dialogData){
+        if(this.dialogData[key] == ""){
+          delete this.dialogData[key]
+        }else{
+          data[key] = this.dialogData[key]
+        }
+      }
       this.$refs.dialogData.validate(valid => {
         if (valid) {
           topicSaveOrUpdate(this.dialogData).then(res => {
@@ -263,7 +273,7 @@ export default {
               this.dialogData.topicName = ''
               this.dialogData.enable = ''
               this.dialogData.orderNum = ''
-              this.topicParent()
+              this.topicAllTree()
               this.$message({
                   type: 'success',
                   message: '添加成功!'
@@ -299,7 +309,7 @@ export default {
       }
       topicDelete(data).then(res => {
         if(res.code == 200){
-              this.topicParent()
+              this.topicAllTree()
               this.$message({
                   type: 'success',
                   message: '删除成功!'
