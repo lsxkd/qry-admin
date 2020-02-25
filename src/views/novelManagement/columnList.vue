@@ -29,10 +29,15 @@
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="展示类型:" prop="showType" v-if="columnOneOrTwo == 2&&dialogData.contentType==1">
           <el-select v-model="dialogData.showType" @change="selectChange" clearable placeholder="请选择" style="width:215px;">
-            <el-option label="一行" value="1"> </el-option>
-            <el-option label="两行" value="2"> </el-option>
-            <el-option label="直列" value="3"> </el-option>
+            <el-option label="三列" value="1"> </el-option>
+            <el-option label="一行两列" value="2"> </el-option>
+            <el-option label="单个两列" value="3"> </el-option>
+            <el-option label="一竖" value="4"> </el-option>
           </el-select>
+          <p class="form-tips" v-show="dialogData.showType == 1">请至少添加<span>3</span>部小说，否则不会显示！</p>
+          <p class="form-tips" v-show="dialogData.showType == 2">请至少添加<span>5</span>部小说，否则不会显示！</p>
+          <p class="form-tips" v-show="dialogData.showType == 3">请至少添加<span>3</span>部小说，否则不会显示！</p>
+          <p class="form-tips" v-show="dialogData.showType == 4">请至少添加<span>3</span>部小说，否则不会显示！</p>
         </el-form-item>
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
@@ -55,7 +60,7 @@
               <div style="display:flex;justify-content: space-between;padding-right:25px;">
                 <div>
                   <i class="el-icon-menu"></i>
-                  <span slot="title">{{item.topicName}}</span>
+                  <span slot="title">{{item.topicName}} <span style="color:#f56c6c;font-size:12px;" v-if="item.enable == 0">(已停用)</span> </span>
                 </div>
                 <div>
                   <el-button type="text" size='mini' @click.stop="openEditOrAdd('add',item,2)">添加</el-button>
@@ -71,7 +76,7 @@
                 <div style="display:flex;justify-content: space-between;">
                   <div> 
                     <i class="el-icon-s-unfold"></i>
-                    <span slot="title">{{em.topicName}}</span>
+                    <span slot="title">{{em.topicName}} <span style="color:#f56c6c;font-size:12px;" v-if="em.enable == 0">(已停用)</span> </span>
                   </div>
                   
                   <div>
@@ -194,7 +199,7 @@ export default {
         this.dialogData.id = row.id
         this.dialogData.topicName = row.topicName
         this.dialogData.enable = String(row.enable)
-        this.dialogData.orderNum = row.orderNum
+        this.dialogData.orderNum = String(row.orderNum)
         if(columnOneOrTwos == 2){
           this.dialogData.contentType = String(row.contentType)
           this.dialogData.showType = String(row.showType)
@@ -264,7 +269,7 @@ export default {
         if(this.dialogData[key] == ""){
           delete this.dialogData[key]
         }else{
-          data[key] = this.dialogData[key]
+          data[key] = String(this.dialogData[key])
         }
       }
       this.$refs.dialogData.validate(valid => {
@@ -332,6 +337,19 @@ export default {
 </script>
 
 <style>
+.el-select-dropdown__list{
+  padding-bottom:17px;
+}
+.form-tips{
+  font-size: 12px;
+  color:#999;
+  
+}
+.form-tips span{
+  font-size: 14px;
+  color:#f56c6c;
+  padding:0 5px;
+}
 .splitPanes{
   width:100%;
   display: flex;
