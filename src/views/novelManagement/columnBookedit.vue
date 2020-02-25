@@ -13,7 +13,7 @@
             </el-form-item> -->
             <el-form-item style="margin-bottom:-2px;float:right;">
               <el-button size="mini" type="cancle" @click="topicBookPage()">取消</el-button>
-              <el-button size="mini" type="primary" @click="topicBookSaveBacth">保存</el-button>
+              <el-button size="mini" type="primary" @click="saveBtns">保存</el-button>
             </el-form-item>
           </el-form>
           <div class="clear"></div>
@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import { managerBookPage,categoryList,topicBookPage,topicBookSaveBacth, } from '@/api/category.js';
+import { managerBookPage,categoryList,topicBookPage,topicBookSaveBacth,topicBookDeleteAll } from '@/api/category.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import draggable from 'vuedraggable'
@@ -274,6 +274,30 @@ export default {
         this.isIndeterminate = false
         this.checkAll = false
       }
+    },
+    saveBtns(){
+      console.log(this.topicBookPageData.length)
+      if(this.topicBookPageData.length<=0){
+        this.topicBookDeleteAll()
+      }else{
+        this.topicBookSaveBacth()
+      }
+    },
+    topicBookDeleteAll(){
+      const data = {
+        topicId:this.columnIds
+      }
+      topicBookDeleteAll(data).then(res => {
+        if(res.code == 200){
+          this.topicBookPage()
+          this.$message({
+              type: 'success',
+              message: '添加成功!'
+          });
+        }else{
+          this.$message.error(res.msg);
+        }
+      })
     },
     topicBookSaveBacth(){
       // this.topicBookSaveBacthPage = this.topicBookPageData

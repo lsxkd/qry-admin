@@ -26,48 +26,49 @@ export const constantRouterMap = [
       }
     }]
   },
-  // {
-  //   path: '/platformUserQuery',
-  //   component: Layout,
-  //   redirect: '/platformUserQuery/userListQuery',
-  //   name: 'platformUserQuery',
-  //   meta: {
-  //     title: 'platformUserQuery',
-  //     icon: 'peoples',
-  //     name:'平台用户查询',
-  //   },
-  //   children: [{
-  //     path: 'userListQuery',
-  //     component: () => import('@/views/platformUserQuery/userListQuery'),
-  //     name: 'userListQuery',
-  //     meta: {
-  //       title: 'userListQuery',
-  //       name:'用户列表查询'
-  //       // icon: 'peoples'
-  //     }
-  //   },
+  {
+    path: '/platformUserQuery',
+    component: Layout,
+    redirect: '/platformUserQuery/userListQuery',
+    name: 'platformUserQuery',
+    meta: {
+      title: 'platformUserQuery',
+      icon: 'peoples',
+      name:'平台用户查询',
+    },
+    children: [{
+      path: 'userListQuery',
+      component: () => import('@/views/platformUserQuery/userListQuery'),
+      name: 'userListQuery',
+      meta: {
+        title: 'userListQuery',
+        name:'用户列表查询',
+        icon: 'peoples'
+      }
+    },
 
-  //   {
-  //     path: 'userRechargeList',
-  //     component: () => import('@/views/platformUserQuery/userRechargeList'),
-  //     name: 'userRechargeList',
-  //     meta: {
-  //       title: 'userRechargeList',
-  //       name:'用户充值列表'
-  //       // icon: 'peoples'
-  //     }
-  //   },
-  //   {
-  //     path: 'userWithdrawList',
-  //     component: () => import('@/views/platformUserQuery/userWithdrawList'),
-  //     name: 'userWithdrawList',
-  //     meta: {
-  //       title: 'userWithdrawList',
-  //       name:'用户提现列表',
-  //       // icon: 'peoples'
-  //     }
-  //   }]
-  // },
+    // {
+    //   path: 'userRechargeList',
+    //   component: () => import('@/views/platformUserQuery/userRechargeList'),
+    //   name: 'userRechargeList',
+    //   meta: {
+    //     title: 'userRechargeList',
+    //     name:'用户充值列表'
+    //     // icon: 'peoples'
+    //   }
+    // },
+    // {
+    //   path: 'userWithdrawList',
+    //   component: () => import('@/views/platformUserQuery/userWithdrawList'),
+    //   name: 'userWithdrawList',
+    //   meta: {
+    //     title: 'userWithdrawList',
+    //     name:'用户提现列表',
+    //     // icon: 'peoples'
+    //   }
+    // }
+  ]
+  },
   {
     path: '/managersAdmin',
     component: Layout,

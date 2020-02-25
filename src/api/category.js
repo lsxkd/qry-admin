@@ -313,6 +313,14 @@ export function topicBookSaveBacth(data) { //批量保存书本
   })
 }
 
+//  删除全部书本
+export function topicBookDeleteAll(data) { //删除全部书本
+  return request({
+      url: '/topic/book/delete/all',
+      method: 'get',
+      params: data
+  })
+}
 
 
 

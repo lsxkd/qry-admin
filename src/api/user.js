@@ -80,7 +80,21 @@ export function applyBookDelete(data) {
 }
 
 
+// APP用户分页查询
+export function managerAppuserList(data) { 
+  return request({
+      url: '/manager/appuser/page',
+      method: 'post',
+      data
+  })
+}
 
-
-
+// 禁用/启用用户
+export function managerAppuserUpdateStatus(data) { 
+  return request({
+    url: '/manager/appuser/update/status',
+    method: 'get',
+    params: data
+  })
+}
 
