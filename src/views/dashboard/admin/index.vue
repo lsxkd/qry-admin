@@ -6,7 +6,28 @@
           <i class="fa fa-gears"></i>
           <span> 关键数据实时指标</span>
         </div>
-        <ul  class="clearfix">
+        <div class="colorBox">
+          <el-row :gutter="16">
+            <el-col :xs="24" :sm="12" :md='8' :lg="4" v-for="(item,index) in summary" :key="index + 'a'"  >
+              <div class="colorBox-item" :class="item.color">
+                <p class="data-summary-number">
+                  <AnimatedNumber :value="item.identifier" :formatValue="formatValue" :duration="600" />
+                </p>
+                <p class="data-summary-title">今日新增用户数量</p>
+              </div>
+            </el-col>
+            <!-- <el-col :xs="24" :sm="12" :lg="4" v-for="(item,index) in summary" :key="index + 'a'"  v-show="index >= 2">
+              <div class="colorBox-item" :class="item.color">
+                <p class="data-summary-number">
+                  <AnimatedNumber value="20" :formatValue="formatValue" :duration="600" />
+                </p>
+                <p class="data-summary-title">今日新增用户数量</p>
+              </div>
+            </el-col> -->
+            
+          </el-row>
+        </div>
+        <!-- <ul  class="clearfix">
           <router-link
             v-for="(item,index) in summary"
             :key="index + 'a'"
@@ -35,7 +56,7 @@
             </p>
             <p class="data-summary-title">{{item.title}}</p>
           </router-link>
-        </ul>
+        </ul> -->
       </el-card>
     </section>
 
@@ -155,7 +176,45 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+.colorBox{
+  width:100%;
+  .colorBox-item{
+    width: 100%;
+    height: 80px;
+    padding: 15px;
+    margin: 0 0.8%;
+    margin-bottom:15px;
+    cursor: pointer;
+    &.red {
+      background-color: #FC7A6A;
+    }
+    &.blue {
+      background-color: #60A5B5;
+    }
+    &.orange {
+      background-color: #F1C77A;
+    }
+    &.purple {
+      background-color: #8994A8;
+    }
+    &.green {
+      background-color: #5AC79D;
+    }
+    &.zise{
+      background-color:#b6a2de;
+    }
 
+    .data-summary-number {
+      font-size: 20px;
+      color: #fff;
+    }
+    .data-summary-title {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #fff;
+    }
+  }
+}
 .dashboard-editor-container {
   padding:15px;
   background-color: rgb(240, 242, 245);

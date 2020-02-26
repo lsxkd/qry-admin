@@ -60,7 +60,12 @@
               <div style="display:flex;justify-content: space-between;padding-right:25px;">
                 <div>
                   <i class="el-icon-menu"></i>
-                  <span slot="title">{{item.topicName}} <span style="color:#f56c6c;font-size:12px;" v-if="item.enable == 0">(已停用)</span> </span>
+                  <span slot="title">{{item.topicName}} 
+                    <span style="color:#f56c6c;font-size:12px;" v-if="item.enable == 0">
+                      <!-- <svg-icon icon-class="stopUse"></svg-icon> -->
+                      (已停用)
+                    </span> 
+                  </span>
                 </div>
                 <div>
                   <el-button type="text" size='mini' @click.stop="openEditOrAdd('add',item,2)">添加</el-button>

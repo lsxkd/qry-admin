@@ -11,11 +11,20 @@
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="用户名:" prop="username">
           <el-input class="article-textarea" placeholder="请输入用户名" style="width:215px;" v-model.trim="dialogData.username"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="密码:" prop="password">
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="密码:" prop="password" v-if="dialogFlag == 'add'">
+          <el-input class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="密码:"  v-if="dialogFlag == 'edit'">
           <el-input class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="手机号:">
           <el-input class="article-textarea" placeholder="请输入手机号" style="width:215px;" maxlength="11" v-model.trim="dialogData.mobile"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="账户状态:" prop="status" >
+          <el-select v-model="dialogData.status" @change="selectChange" clearable placeholder="请选择" style="width:215px;">
+            <el-option label="启用" value="0"> </el-option>
+            <el-option label="停用" value="1"> </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="邮箱:">
           <el-input class="article-textarea" placeholder="请输入邮箱" style="width:215px;"  v-model.trim="dialogData.email"></el-input>
@@ -127,33 +136,49 @@ export default {
       userListPage: {
         pageNum: 1,
         pageSize: 10,
-        // startTime:'',
-        // endTime:'',
-        // username:'',//账号
-        // status:'' , //状态0正常1拉黑
+        startTime:'',
+        endTime:'',
+        username:'',//账号
+        status:'' , //状态0正常1拉黑
       },
       registrationTime:[],
       dialogTableVisible:false,
       dialogData:{
         username:'',
         password:'',
+        status:'',
+        mobile:'',
+        realname:'',
+        email:'',
       },
       dialogRules: {
         username: [{ required: true, trigger: 'blur',message:'请输入用户名' }],
         password: [{ required: true, trigger: 'blur',message:'请输入密码'  }]
       },
+      dialogFlag:'',
     }
   },
   created() {
     this.getUserList();
   },
   methods: {
+    selectChange(val){
+      this.$forceUpdate();
+    },
     searchBtn(){
       this.userListPage.pageNum = 1
+      if(this.registrationTime&&this.registrationTime.length>0){
+        this.userListPage.startTime = this.registrationTime[0] + " 00:00:00"
+        this.userListPage.endTime = this.registrationTime[1] + " 23:59:59"
+      }else{
+        this.userListPage.startTime = ''
+        this.userListPage.endTime = ''
+      }
       this.getUserList()
     },
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
+      this.dialogFlag = flag
       if(flag == 'edit'){
         this.dialogData.id = row.id
         this.dialogData.username = row.username
@@ -161,6 +186,7 @@ export default {
         this.dialogData.mobile = row.mobile
         this.dialogData.realname = row.realname
         this.dialogData.email = row.email
+        this.dialogData.status = String(row.status)
       }
     },
     pageChange (p) {
@@ -168,8 +194,15 @@ export default {
       this.getUserList()
     },
     getUserList() {
-      this.listLoading = true
-      managersList(this.userListPage).then(res => {
+      const data = {}
+      for(let key in this.userListPage){
+        if(this.userListPage[key] == '' || this.userListPage[key] == null){
+          this.userListPage[key]=''
+        }else{
+          data[key] = this.userListPage[key]
+        }
+      }
+      managersList(data).then(res => {
         // console.log(res.data)
         this.userList = res.data.list
         this.total = res.data.total

@@ -74,7 +74,7 @@
         </template>
       </el-table-column>
       <el-table-column label="手机号" prop='mobile' :min-width="120"></el-table-column>
-      <el-table-column label="昵称" prop='username' :min-width="110"></el-table-column>
+      <el-table-column label="昵称" prop='userName' :min-width="110"></el-table-column>
       
       <el-table-column label="个性签名" prop='signWork' :min-width="110"></el-table-column>
       <el-table-column label="性别" :min-width="100">
@@ -189,6 +189,9 @@ export default {
       if(this.registrationTime&&this.registrationTime.length>0){
         this.userListPage.startTime = this.registrationTime[0] + " 00:00:00"
         this.userListPage.endTime = this.registrationTime[1] + " 23:59:59"
+      }else{
+        this.userListPage.startTime = ''
+        this.userListPage.endTime = ''
       }
       this.managerAppuserList()
     },

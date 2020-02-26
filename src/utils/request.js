@@ -50,11 +50,12 @@ service.interceptors.response.use(
     // console.log(res.code);
     if (res.code !== 200) {
       // console.log(res.msg)
-      Message({
-        message: res.msg,
-        type: 'error',
-        duration: 3 * 1000
-      })
+      // Message.error(res.msg)
+      // Message({
+      //   message: res.msg,
+      //   type: 'error',
+      //   duration: 3 * 1000
+      // })
       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
       if (res.code === 402 ) {
         // 请自行在引入 MessageBox
@@ -67,8 +68,10 @@ service.interceptors.response.use(
             location.reload() // 为了重新实例化vue-router对象 避免bug
           })
         })
+      }else if(res.code === 1007){
+        Message.error(res.msg)
       }
-      return Promise.reject('error')
+      return Promise.reject(res.msg)
     } else {
       // console.log(200)
       return response.data

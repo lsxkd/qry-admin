@@ -93,6 +93,7 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 import MDinput from '@/components/MDinput'
 import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，element-ui的select不能满足所有需求
 import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
+// import VoiceAnnouncements from './voiceAnnouncements'
 export default {
   name: 'novelChapterContent',
   directives: { elDragDialog },
