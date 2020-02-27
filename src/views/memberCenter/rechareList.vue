@@ -20,7 +20,7 @@
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="赠送金币数量:" >
           <el-input class="article-textarea"  placeholder="请输入赠送金币数量" style="width:215px;"  v-model.trim="dialogData.coinExtNum"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:">
+        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:" prop="orderNum">
           <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
 
@@ -128,11 +128,13 @@ export default {
         amount:'',
         coinNum:'',
         coinExtNum:'',
+        orderNum:'',
       },
       dialogRules: {
         coinComposeName: [{ required: true, trigger: 'blur',message:'请输入名称' }],
         amount: [{ required: true, trigger: 'blur',message:'请输入金额'  }],
-        coinNum: [{ required: true, trigger: 'blur',message:'请输入金币数量' }]
+        coinNum: [{ required: true, trigger: 'blur',message:'请输入金币数量' }],
+        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序序号' }]
       },
       
     }
@@ -146,10 +148,18 @@ export default {
       this.dialogTableVisible = true
       if(flag == 'edit'){
         this.dialogData.id = row.id
-        this.dialogData.name = row.name
-        this.dialogData.introduce = row.introduce
+        this.dialogData.coinComposeName = row.coinComposeName
+        this.dialogData.amount = row.amount
         this.dialogData.orderNum = row.orderNum
-        this.dialogData.iconUrl = row.iconUrl
+        this.dialogData.coinNum = row.coinNum
+        this.dialogData.coinExtNum = row.coinExtNum
+      }else{
+        delete this.dialogData.id
+        this.dialogData.coinComposeName = ''
+        this.dialogData.amount = ''
+        this.dialogData.orderNum = ''
+        this.dialogData.coinNum = ''
+        this.dialogData.coinExtNum = ''
       }
     },
     searchBtn(){
@@ -178,8 +188,13 @@ export default {
           addCoincompose(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.username = ''
-              this.dialogData.password = ''
+              this.dialogData = {
+                coinComposeName:'',
+                amount:'',
+                coinNum:'',
+                coinExtNum:'',
+                orderNum:'',
+              }
               this.getUserList()
               this.$message({
                   type: 'success',

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div style="text-align:center;margin-bottom:20px;">
+    <!-- <div style="text-align:center;margin-bottom:20px;">
       <el-radio @change='radioBtn' v-model="userNumber" size="mini" label="6" border>最近7天</el-radio>
       <el-radio @change='radioBtn' v-model="userNumber" size="mini" label="13" border>最近14天</el-radio>
       <el-radio @change='radioBtn' v-model="userNumber" size="mini" label="30" border>最近30天</el-radio>
-    </div>
-    <div :class="className" ref="chartBar" :style="{height:height,width:width}"></div>
+    </div> -->
+    <div :class="className" ref="chartPie" :style="{height:height,width:width}"></div>
   </div>
   
 </template>
@@ -14,9 +14,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import { debounce } from '@/utils'
-import { newUserChart } from '@/api/report.js';
-const animationDuration = 6000
-
+import { categoryPie } from '@/api/user.js';
 export default {
   props: {
     className: {
@@ -30,13 +28,14 @@ export default {
     height: {
       type: String,
       default: '300px'
-    },
+    }
   },
   data() {
     return {
       chart: null,
-      newUserChartData:{},
       userNumber: '6',
+      categoryPieData:[],
+      nameArr:[],
     }
   },
   mounted() {
@@ -57,11 +56,11 @@ export default {
     this.chart = null
   },
   created() {
-    this.newUserChart()
+    this.categoryPie()
   },
   methods: {
     radioBtn(val){
-      this.newUserChart()
+      this.categoryPie()
     },
     getDay(day){
         //获取最近7天日期
@@ -84,14 +83,18 @@ export default {
       }
       return m;
     },
-    newUserChart() {
+    categoryPie() {
       const data = {
         startDate:this.getDay(-this.userNumber)+' 00:00:00',
         endDate:this.getDay(0)+' 23:59:59',
       }
-      newUserChart(data).then(res => {
+      categoryPie(data).then(res => {
         if(res.code == 200){
-          this.newUserChartData = res.data
+          
+          this.categoryPieData = res.data
+          this.categoryPieData.map((item)=>{
+            this.nameArr.push(item.name)
+          })
           this.initChart()
           this.__resizeHanlder = debounce(() => {
             if (this.chart) {
@@ -105,85 +108,43 @@ export default {
         }
         
       }).catch(err => {
-        this.newUserChartData = {};
+        this.categoryPieData = [];
       });
     },
     initChart() {
-      // console.log(this.$el)
       // this.chart = echarts.init(this.$el, 'macarons')
-      this.chart = echarts.init(this.$refs.chartBar, 'macarons')
+      this.chart = echarts.init(this.$refs.chartPie, 'macarons')
 
       this.chart.setOption({
         tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-            label: {
-              show: true
-            }
-          }
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            mark: {show: true},
-            // dataView: {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
-            restore: {show: true},
-            saveAsImage: {show: true}
-          }
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
-          data: ['新增用户', ],
-          itemGap: 1,
+          left: 'center',
+          bottom: '10',
+          data: this.nameArr,
         },
         calculable: true,
-        grid: {
-          top: 40,
-          left: '2%',
-          right: '3%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: [{
-          type: 'category',
-          // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          data:this.newUserChartData.xAxisData,
-          axisTick: {
-            alignWithLabel: true
+        series: [
+          {
+            name: '用户数',
+            type: 'pie',
+            roseType: 'radius',
+            radius: [15, 95],
+            center: ['50%', '40%'],
+            // data: [
+            //   { value: 320, name: 'Industries' },
+            //   { value: 240, name: 'Technology' },
+            //   { value: 149, name: 'Forex' },
+            //   { value: 100, name: 'Gold' },
+            //   { value: 59, name: 'Forecasts' }
+            // ],
+            data:this.categoryPieData,
+            animationEasing: 'cubicInOut',
+            animationDuration: 1600,
+            
           }
-        }],
-        yAxis: [{
-          name:'新增用户数',
-          type: 'value',
-          axisTick: {
-            show: false
-          }
-        }],
-        series: [{
-          name: '新增用户',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          // data: [79, 52, 200, 334, 390, 330, 220],
-          data:this.newUserChartData.yAxisData,
-          animationDuration
-        }, 
-        // {
-        //   name: 'pageB',
-        //   type: 'bar',
-        //   stack: 'vistors',
-        //   barWidth: '60%',
-        //   data: [80, 52, 200, 334, 390, 330, 220],
-        //   animationDuration
-        // }, {
-        //   name: 'pageC',
-        //   type: 'bar',
-        //   stack: 'vistors',
-        //   barWidth: '60%',
-        //   data: [30, 52, 200, 334, 390, 330, 220],
-        //   animationDuration
-        // }
         ]
       })
     }

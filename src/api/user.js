@@ -98,3 +98,20 @@ export function managerAppuserUpdateStatus(data) {
   })
 }
 
+// 书本分类数量饼图
+export function categoryPie(data) { 
+  return request({
+      url: '/home/today/book/category/pie',
+      method: 'post',
+      data
+  })
+}
+
+// 今日分析数据
+export function todayKpi(data) { 
+  return request({
+      url: '/home/today/kpi',
+      method: 'post',
+      data
+  })
+}

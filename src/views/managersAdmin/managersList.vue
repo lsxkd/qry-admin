@@ -210,13 +210,27 @@ export default {
       })
     },
     addManagerBtn(){
+      const data = {}
+      for(let key in this.dialogData){
+        if(this.dialogData[key] == '' || this.dialogData[key] == null){
+          this.dialogData[key]=''
+        }else{
+          data[key] = this.dialogData[key]
+        }
+      }
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          addManagers(this.dialogData).then(res => {
+          addManagers(data).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.username = ''
-              this.dialogData.password = ''
+              this.dialogData = {
+                username:'',
+                password:'',
+                status:'',
+                mobile:'',
+                realname:'',
+                email:'',
+              },
               this.getUserList()
               this.$message({
                   type: 'success',

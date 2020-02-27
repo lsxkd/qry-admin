@@ -8,12 +8,13 @@
         </div>
         <div class="colorBox">
           <el-row :gutter="16">
-            <el-col :xs="24" :sm="12" :md='8' :lg="4" v-for="(item,index) in summary" :key="index + 'a'"  >
+            <el-col :xs="24" :sm="18" :md='12' :lg="6" v-for="(item,index) in summary" :key="index + 'a'"  >
               <div class="colorBox-item" :class="item.color">
                 <p class="data-summary-number">
-                  <AnimatedNumber :value="item.identifier" :formatValue="formatValue" :duration="600" />
+                  <AnimatedNumber  v-if="item.flag == 'number'" :value="item.identifier" :formatValue="formatValue" :duration="600" />
+                  <span v-if="item.flag == 'string'">{{item.identifier}}</span>
                 </p>
-                <p class="data-summary-title">今日新增用户数量</p>
+                <p class="data-summary-title">{{item.title}}</p>
               </div>
             </el-col>
             <!-- <el-col :xs="24" :sm="12" :lg="4" v-for="(item,index) in summary" :key="index + 'a'"  v-show="index >= 2">
@@ -59,7 +60,32 @@
         </ul> -->
       </el-card>
     </section>
+    <section class="data-summary">
+      <el-card>
+        <!-- <div slot="header">
+          <i class="fa fa-gears"></i>
+          <span> 今日各个游戏收益</span>
+        </div> -->
 
+        <el-row :gutter="32">
+          <!-- <el-col :xs="24" :sm="24" :lg="8">
+            <div class="chart-wrapper">
+              <bar-chart></bar-chart>
+            </div>
+          </el-col>
+          <el-col :xs="24" :sm="24" :lg="8">
+            <div class="chart-wrapper">
+              <pie-chart></pie-chart>
+            </div>
+          </el-col> -->
+          <el-col :xs="24" :sm="24" :lg="24">
+            <div class="chart-wrapper">
+              <PieChartTwo></PieChartTwo>
+            </div>
+          </el-col>
+        </el-row>
+      </el-card>
+    </section>
     <section class="data-summary">
       <el-card>
         <div slot="header">
@@ -112,24 +138,27 @@
 <script>
 
 import AnimatedNumber from 'animated-number-vue'
-import { dailyKpiList } from '@/api/api.js';
+import { categoryPie,todayKpi } from '@/api/user.js';
+import PieChart from './components/PieChart'
+import PieChartTwo from './components/PieChartTwo'
+import BarChart from './components/BarChart'
 export default {
   name: 'dashboard-admin',
   components: {
-    AnimatedNumber
+    AnimatedNumber,BarChart,PieChart,PieChartTwo
   },
   data() {
     return {
       summary: [
-        { title: '今日新增用户数量', identifier: 0, color: 'blue', path: { name: 'dashboard' }},
-        { title: '总用户数量', identifier: 0, color: 'orange', path: { name: 'dashboard' }},
-        { title: '今日充值金额', identifier: 0.00, color: 'purple', path: { name: 'dashboard' }},
-        { title: '今日VIP充值金额', identifier: 0.00, color: 'green', path: { name: 'dashboard' }},
+        { title: '今日新增用户数', identifier: 0, color: 'blue',flag:'number', path: { name: 'dashboard' }},
+        { title: '总用户数量', identifier: 0, color: 'orange',flag:'number', path: { name: 'dashboard' }},
+        { title: '日活跃数量', identifier: 0, color: 'purple',flag:'number', path: { name: 'dashboard' }},
+        { title: '总阅读时间', identifier: 0, color: 'green',flag:'string', path: { name: 'dashboard' }},
         // { title: '今日USDT充值量', identifier: 60, color: 'red', path: { name: 'dashboard' }}
       ],
       tableData1: [
-        { name: '今日充值金额', value: 20 },
-        { name: '今日VIP充值金额', value: 20 }
+        { name: '今日充值金额', value: 0 },
+        { name: '今日VIP充值金额', value: 0 }
       ],
       // tableData2: [
       //   { name: 'DD积分总充值量', value: 20 },
@@ -147,11 +176,15 @@ export default {
       //   { name: '转盘今日盈利', value: 20 }
       // ],
       listData: {},
-      isComplet: true
+      isComplet: true,
+      categoryPieData:[],
+      todayKpiData:{},
     }
   },
   created() {
     // this.getData();
+    // this.categoryPie()
+    this.todayKpi()
   },
   methods: {
     formatValue(value) {
@@ -160,17 +193,26 @@ export default {
     formatValueTwo(value) {
       return value.toFixed(2)
     },
-    getData() {
-      dailyKpiList().then(d => {
-        this.listData = d.data
-        this.summary[0].identifier = this.listData.todayUser || 0
-        this.summary[1].identifier = this.listData.totalUser || 0
-        this.summary[2].identifier = this.listData.todayIncome || 0
-        this.summary[3].identifier = this.listData.todayRecharge || 0
+    categoryPie() {
+      categoryPie().then(res => {
+        // console.log(res.data)
+        this.categoryPieData = res.data
+        
+      })
+    },
+    todayKpi() {
+      todayKpi().then(res => {
+        // console.log(res.data)
+        this.todayKpiData = res.data
+        this.summary[0].identifier = this.todayKpiData.dayNewUsers || 0
+        this.summary[1].identifier = this.todayKpiData.allUser || 0
+        this.summary[2].identifier = this.todayKpiData.dayAlive || 0
+        this.summary[3].identifier = this.todayKpiData.readTime || 0
       }).catch(err => {
-        this.listData = {};
+        this.todayKpiData = {};
       });
-    }
+    },
+
   }
 }
 </script>

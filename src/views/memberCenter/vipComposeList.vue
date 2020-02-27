@@ -14,19 +14,19 @@
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="原价:" prop="orgAmount">
           <el-input class="article-textarea"  placeholder="请输入原价" style="width:215px;"  v-model.trim="dialogData.orgAmount"></el-input>
         </el-form-item>
-        <el-form-item label="是否优惠:" label-width="160px" >
-          <el-select v-model="userListPage.discount" placeholder="请选择" clearable>
+        <el-form-item label="是否优惠:" label-width="160px" prop="discount">
+          <el-select v-model="dialogData.discount" placeholder="请选择" clearable>
             <el-option label="否" value="0"></el-option>
             <el-option label="是" value="1"></el-option>
           </el-select>
       </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="160px" label="优惠价:" >
+        <el-form-item style="margin-bottom: 20px;" label-width="160px" label="优惠价:" prop="disAmount" v-if="dialogData.discount == 1">
           <el-input class="article-textarea" placeholder="请输入优惠价" style="width:215px;"  v-model.trim="dialogData.disAmount"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="有效期时长(单位月):" prop="monthNum">
           <el-input class="article-textarea"  placeholder="请输入有效期时长" style="width:215px;"  v-model.trim="dialogData.monthNum"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="160px" label="排序:">
+        <el-form-item style="margin-bottom: 20px;" label-width="160px" label="排序:" prop="orderNum">
           <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
 
@@ -73,22 +73,23 @@
           {{scope.$index + 1}}
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column>
-      <el-table-column label='创建时间' :min-width="160">
+      <el-table-column label="排序" prop='orderNum' align="center" :min-width="60"></el-table-column>
+      <el-table-column label='创建时间' align="center" :min-width="160">
         <template slot-scope="scope">
           {{scope.row.createTime}}
         </template>
       </el-table-column>
-      <el-table-column label="VIP套餐名称" prop='vipComposeName' :min-width="150"></el-table-column>
-      <el-table-column label="原价" prop='orgAmount' :min-width="150"></el-table-column>
-      <el-table-column label="优惠价" prop='disAmount' :min-width="150"></el-table-column>
-      <el-table-column label="有效期时长(单位月)" prop='monthNum' :min-width="150"></el-table-column>
-      <el-table-column label="是否优惠" :min-width="150">
+      <el-table-column label="VIP套餐名称" align="center" prop='vipComposeName' :min-width="150"></el-table-column>
+      <el-table-column label="原价" prop='orgAmount' :min-width="110"></el-table-column>
+      <el-table-column label="是否优惠" align="center" :min-width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.discount == 0">否</span>
           <span v-if="scope.row.discount == 1">是</span>
         </template>
       </el-table-column>
+      <el-table-column label="优惠价" prop='disAmount' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="有效期时长(单位月)" align="center" prop='monthNum' :min-width="100"></el-table-column>
+      
       <el-table-column align="center" fixed="right" label="操作" width="250">
         <template slot-scope="scope">
           <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
@@ -141,6 +142,7 @@ export default {
         discount: [{ required: true, trigger: 'blur',message:'请选择是否优惠' }],
         disAmount: [{ required: true, trigger: 'blur',message:'请输入优惠价格' }],
         monthNum: [{ required: true, trigger: 'blur',message:'请输入有效期时长' }],
+        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序序号' }],
       },
       
     }
@@ -154,10 +156,20 @@ export default {
       this.dialogTableVisible = true
       if(flag == 'edit'){
         this.dialogData.id = row.id
-        this.dialogData.name = row.name
-        this.dialogData.introduce = row.introduce
+        this.dialogData.vipComposeName = row.vipComposeName
+        this.dialogData.disAmount = row.disAmount
+        this.dialogData.orgAmount = row.orgAmount
+        this.dialogData.discount = String(row.discount)
         this.dialogData.orderNum = row.orderNum
-        this.dialogData.iconUrl = row.iconUrl
+        this.dialogData.monthNum = row.monthNum
+      }else{
+        delete this.dialogData.id 
+        this.dialogData.vipComposeName = ''
+        this.dialogData.disAmount = ''
+        this.dialogData.orgAmount = ''
+        this.dialogData.discount = ''
+        this.dialogData.orderNum = ''
+        this.dialogData.monthNum = ''
       }
     },
     searchBtn(){
@@ -185,8 +197,6 @@ export default {
           addVipCompose(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.username = ''
-              this.dialogData.password = ''
               this.getUserList()
               this.$message({
                   type: 'success',
