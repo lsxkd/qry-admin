@@ -14,7 +14,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import { debounce } from '@/utils'
-import { newUserChart } from '@/api/report.js';
+// import { newUserChart } from '@/api/report.js';
 const animationDuration = 6000
 
 export default {

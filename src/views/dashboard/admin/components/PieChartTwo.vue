@@ -128,9 +128,9 @@ export default {
         calculable: true,
         series: [
           {
-            name: '用户数',
+            name: '书的数量',
             type: 'pie',
-            roseType: 'radius',
+            // roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '40%'],
             // data: [

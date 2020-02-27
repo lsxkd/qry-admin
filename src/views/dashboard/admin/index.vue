@@ -86,7 +86,7 @@
         </el-row>
       </el-card>
     </section>
-    <section class="data-summary">
+    <!-- <section class="data-summary">
       <el-card>
         <div slot="header">
           <i class="fa fa-gears"></i>
@@ -108,28 +108,8 @@
             </template>
           </el-table-column>
         </el-table>
-<!-- 
-        <el-table
-            :data="tableData4"
-            :show-header="false"
-            size="small"
-            border
-            stripe
-            style="width: 100%; margin-top: 30px;"
-          >
-          <el-table-column prop="name">
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column>
-            <template slot-scope="scope">
-              <span>{{ scope.row.value }}</span>
-            </template>
-          </el-table-column>
-        </el-table> -->
       </el-card>
-    </section>
+    </section> -->
 
   </div>
 </template>
@@ -139,21 +119,23 @@
 
 import AnimatedNumber from 'animated-number-vue'
 import { categoryPie,todayKpi } from '@/api/user.js';
-import PieChart from './components/PieChart'
-import PieChartTwo from './components/PieChartTwo'
+// import PieChart from './components/PieChart'
+// import PieChartTwo from './components/PieChartTwo'
 import BarChart from './components/BarChart'
 export default {
   name: 'dashboard-admin',
   components: {
-    AnimatedNumber,BarChart,PieChart,PieChartTwo
+    AnimatedNumber,
+    // BarChart,PieChart,
+    PieChartTwo
   },
   data() {
     return {
       summary: [
         { title: '今日新增用户数', identifier: 0, color: 'blue',flag:'number', path: { name: 'dashboard' }},
         { title: '总用户数量', identifier: 0, color: 'orange',flag:'number', path: { name: 'dashboard' }},
-        { title: '日活跃数量', identifier: 0, color: 'purple',flag:'number', path: { name: 'dashboard' }},
-        { title: '总阅读时间', identifier: 0, color: 'green',flag:'string', path: { name: 'dashboard' }},
+        { title: '今日用户活跃数量', identifier: 0, color: 'purple',flag:'number', path: { name: 'dashboard' }},
+        { title: '今日阅读时间', identifier: 0, color: 'green',flag:'string', path: { name: 'dashboard' }},
         // { title: '今日USDT充值量', identifier: 60, color: 'red', path: { name: 'dashboard' }}
       ],
       tableData1: [
