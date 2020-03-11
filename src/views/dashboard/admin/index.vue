@@ -120,8 +120,8 @@
 import AnimatedNumber from 'animated-number-vue'
 import { categoryPie,todayKpi } from '@/api/user.js';
 // import PieChart from './components/PieChart'
-// import PieChartTwo from './components/PieChartTwo'
-import BarChart from './components/BarChart'
+import PieChartTwo from './components/PieChartTwo'
+// import BarChart from './components/BarChart'
 export default {
   name: 'dashboard-admin',
   components: {
