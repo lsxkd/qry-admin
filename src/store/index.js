@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 import app from './modules/app'
 import errorLog from './modules/errorLog'
 import permission from './modules/permission'
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
     tagsView,
     user
   },
-  getters
+  getters,
+  // plugins: [createPersistedState()]//把拿到的用户数据持久化存在本地(防止页面刷新 vuex没有数据)
 })
 
 export default store

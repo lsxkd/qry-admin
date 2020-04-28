@@ -1,8 +1,10 @@
 module.exports = {
   NODE_ENV: '"production"',
   ENV_CONFIG: '"prod"',
-  // BASE_API: '"http://18.163.30.137:80"',//外网
-  BASE_API: '"http://47.112.147.92:80/backend-api/"',
-  // BASE_API: '"http://18.163.27.241"'  //亚马孙
-  fileUpload:'"http://47.112.147.92:80/backend-api/fileUpload"'
+  // BASE_API: '"http://47.112.147.92:8080/backend-api/"',
+  // fileUpload:'"http://47.112.147.92:8080/backend-api/fileUpload"',
+  // BASE_API: '"http://192.168.5.129:80/backend-api/"',
+  // fileUpload:'"http://192.168.5.129:80/backend-api/fileUpload"',
+  BASE_API: '"http://47.112.36.44:80/backend-api/"',
+  fileUpload:'"http://47.112.36.44:80/backend-api/fileUpload"',
 }

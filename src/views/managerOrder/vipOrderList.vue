@@ -10,6 +10,7 @@
         <el-select v-model="userListPage.payWay" placeholder="请选择" clearable>
           <el-option label="微信支付" value="WechatPay"></el-option>
           <el-option label="支付宝支付" value="AliPay"></el-option>
+          <el-option label="金币支付" value="CoinPay"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="订单状态:">
@@ -20,7 +21,7 @@
         </el-select>
       </el-form-item>
       
-      <el-form-item label="注册时间">
+      <el-form-item label="创建时间">
         <el-date-picker
           v-model="registrationTime"
           type="daterange"
@@ -67,6 +68,7 @@
         <template slot-scope="scope">
           <span v-if="scope.row.payWay == 'WechatPay'">微信支付</span>
           <span v-if="scope.row.payWay == 'AliPay'">支付宝支付</span>
+          <span v-if="scope.row.payWay == 'CoinPay'">金币支付</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" :min-width="150">

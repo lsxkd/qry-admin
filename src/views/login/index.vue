@@ -53,10 +53,11 @@
 </template>
 
 <script>
+// import { mapState } from "vuex";
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
-
+import { getHostPath } from '@/api/category.js';
 export default {
   components: { LangSelect, SocialSign },
   name: 'login',
@@ -70,8 +71,8 @@ export default {
       // }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 3) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 6) {
+        callback(new Error('密码长度必须大于6位'))
       } else {
         callback()
       }
@@ -90,7 +91,21 @@ export default {
       showDialog: false
     }
   },
+  computed:{
+    // ...mapState(["user"])
+  },
   methods: {
+    getHostPath(){
+      getHostPath().then(res => {
+        if(res.code == 200){
+          let host = res.data
+          localStorage.setItem("hostPath", host);
+          // commit('SET_TOKEN', host)
+        }else{
+          this.$message.error(res.msg);
+        }
+      })
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -104,9 +119,10 @@ export default {
           this.loading = true
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
             this.loading = false
+            this.getHostPath()
             this.$router.push({ path: '/' })
           }).catch((err) => {
-            this.$message.error(err)
+            // this.$message.error(err)
             this.loading = false
           })
         } else {

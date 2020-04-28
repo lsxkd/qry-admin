@@ -26,9 +26,9 @@
           <el-radio v-model="dialogData.enable" :label="1">是</el-radio>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:" prop="orderNum">
-          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
+          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="图片:">
+        <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="120px" label="图片:">
           <el-upload
             class="avatar-uploader"
             :action="FileUpload"
@@ -128,6 +128,7 @@ import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
+import { validatorColumnName,validatorOrderNum } from '@/utils/validator'
 export default {
   name: 'bannerList',
   directives: { elDragDialog },
@@ -159,9 +160,9 @@ export default {
 
       },
       dialogRules: {
-        bannerName: [{ required: true, trigger: 'blur',message:'请输入banner名称' }],
+        bannerName: [{ required: true, trigger: 'blur',validator: validatorColumnName }],
         enable: [{ required: true, trigger: 'blur',message:'请输入简介'  }],
-        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序'  }],
+        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum   }],
         bookId: [{ required: true, trigger: 'blur',message:'请选择小说'  }],
         bannerUrl:[{ required: true, trigger: 'blur',message:'请上传图片'  }],
       },
@@ -282,10 +283,10 @@ export default {
       })
     },
     topicBannerSave(){
-      
+      console.log(this.dialogData)
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          if(this.dialogData.iconUrl == ''){
+          if(!this.dialogData.bannerUrl){
             this.$message.error('请上传分类图片！');
             return
           }
@@ -297,7 +298,7 @@ export default {
               this.topicBannerPage()
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: '操作成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -313,10 +314,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
       }).catch(() => {
         this.$message({
           type: 'info',

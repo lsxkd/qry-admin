@@ -3,16 +3,16 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加"
+        :title="dialogTitle"
         :visible.sync="dialogTableVisible"
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="VIP套餐名称:" prop="vipComposeName">
-          <el-input class="article-textarea" placeholder="请输入VIP套餐名称" style="width:215px;" v-model.trim="dialogData.vipComposeName"></el-input>
+          <el-input class="article-textarea" placeholder="请输入VIP套餐名称" style="width:215px;" maxlength="20" v-model.trim="dialogData.vipComposeName"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="原价:" prop="orgAmount">
-          <el-input class="article-textarea"  placeholder="请输入原价" style="width:215px;"  v-model.trim="dialogData.orgAmount"></el-input>
+          <el-input class="article-textarea"  placeholder="请输入原价" style="width:215px;" maxlength="9" @blur="changeMonthNum(dialogData.orgAmount)" @input.native="changeMonthNum(dialogData.orgAmount)" v-model.trim="dialogData.orgAmount"></el-input>
         </el-form-item>
         <el-form-item label="是否优惠:" label-width="160px" prop="discount">
           <el-select v-model="dialogData.discount" placeholder="请选择" clearable>
@@ -21,13 +21,13 @@
           </el-select>
       </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="优惠价:" prop="disAmount" v-if="dialogData.discount == 1">
-          <el-input class="article-textarea" placeholder="请输入优惠价" style="width:215px;"  v-model.trim="dialogData.disAmount"></el-input>
+          <el-input class="article-textarea" placeholder="请输入优惠价" style="width:215px;" maxlength="9"  v-model.trim="dialogData.disAmount"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="有效期时长(单位月):" prop="monthNum">
-          <el-input class="article-textarea"  placeholder="请输入有效期时长" style="width:215px;"  v-model.trim="dialogData.monthNum"></el-input>
+          <el-input class="article-textarea"  placeholder="请输入有效期时长" style="width:215px;" maxlength="4" @blur="handleInput(dialogData.monthNum)" @input.native="handleInput(dialogData.monthNum)"  v-model.trim="dialogData.monthNum"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="排序:" prop="orderNum">
-          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
+          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
 
         <div style="text-align:center;">
@@ -115,6 +115,7 @@
 import { vipComposeList,addVipCompose,delVipCompose } from '@/api/category.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+import { validatorOrderNum,validatorColumnName } from '@/utils/validator'
 export default {
   name: 'vipComposeList',
   directives: { elDragDialog },
@@ -135,26 +136,49 @@ export default {
         discount:'',
         disAmount:'',
         monthNum:'',
+        orderNum:''
       },
       dialogRules: {
-        vipComposeName: [{ required: true, trigger: 'blur',message:'请输入vip套餐名称' }],
+        vipComposeName: [{ required: true, trigger: 'blur',validator: validatorColumnName }],
         orgAmount: [{ required: true, trigger: 'blur',message:'请输入原价'  }],
         discount: [{ required: true, trigger: 'blur',message:'请选择是否优惠' }],
         disAmount: [{ required: true, trigger: 'blur',message:'请输入优惠价格' }],
         monthNum: [{ required: true, trigger: 'blur',message:'请输入有效期时长' }],
-        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序序号' }],
+        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum }],
       },
-      
+      dialogTitle:'添加'
     }
   },
   created() {
     this.getUserList();
   },
   methods: {
+    handleInput(e) {
+      this.dialogData.monthNum = e.replace(/[^\d]/g,'');
+    },
+    changeMonthNum(val) {
+        val = val.replace(/(^\s*)|(\s*$)/g, "")
+        if(!val) {
+            this.a = "";
+            return
+        }
+        var reg = /[^\d.]/g
 
+        // 只能是数字和小数点，不能是其他输入
+        val = val.replace(reg, "")
+
+        // 保证第一位只能是数字，不能是点
+        val = val.replace(/^\./g, "");
+        // 小数只能出现1位
+        val = val.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        // 小数点后面保留2位
+        val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        this.dialogData.orgAmount = val;
+    },
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
       if(flag == 'edit'){
+        this.dialogTitle = "编辑"
         this.dialogData.id = row.id
         this.dialogData.vipComposeName = row.vipComposeName
         this.dialogData.disAmount = row.disAmount
@@ -163,6 +187,7 @@ export default {
         this.dialogData.orderNum = row.orderNum
         this.dialogData.monthNum = row.monthNum
       }else{
+        this.dialogTitle = "添加"
         delete this.dialogData.id 
         this.dialogData.vipComposeName = ''
         this.dialogData.disAmount = ''
@@ -200,7 +225,7 @@ export default {
               this.getUserList()
               this.$message({
                   type: 'success',
-                  message: '成功!'
+                  message: this.dialogTitle + '成功!'
               });
               this.dialogData = {
                 vipComposeName:'',
@@ -224,10 +249,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
       }).catch(() => {
         this.$message({
           type: 'info',

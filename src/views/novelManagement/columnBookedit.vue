@@ -36,8 +36,8 @@
           </thead>
         </table>
         <div style="height: 1150px;overflow: hidden;overflow-y: auto;">
-          <el-scrollbar style="height: 100%;overflow-x: hidden;">
-            <table class="table_detail" border="0" cellspacing="0" cellpadding="0" style="width:415px;"> 
+          <el-scrollbar style="height: 100%;overflow-x: hidden;max-height:750px;">
+            <table class="table_detail" border="0" cellspacing="0"  cellpadding="0" style="width:415px;"> 
               <draggable v-model="topicBookPageData" :move="getdata" @update="datadragEnd">
                 <tbody style="width:100%;" v-for="(item,indexs) in topicBookPageData" :key="indexs">
                   <tr style="width:100%;">
@@ -73,11 +73,11 @@
         </div>
         <el-form  size="small" inline :model="userListPage">
           <el-form-item label="书名:">
-            <el-input size="mini" placeholder="书名" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
+            <el-input size="mini" placeholder="书名" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '130px' }" clearable />
           </el-form-item>
           <el-form-item label="分类:">
             <!-- <el-input placeholder="分类ID" v-model.trim="userListPage.categoryId" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable /> -->
-            <el-select v-model="userListPage.categoryId" size="mini" filterable  clearable placeholder="请选择" style="width:150px;">
+            <el-select v-model="userListPage.categoryId" size="mini" filterable  clearable placeholder="请选择" style="width:130px;">
               <el-option
                 v-for="item in categoryListData"
                 :key="item.value"
@@ -86,18 +86,18 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <!-- <el-form-item label="是否完结:">
-            <el-select v-model="userListPage.complete" clearable placeholder="请选择">
+          <el-form-item label="是否完结:">
+            <el-select v-model="userListPage.complete" clearable placeholder="请选择" style="width:100px;">
               <el-option label="否" value="0"> </el-option>
               <el-option label="是" value="1"> </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费:">
-            <el-select v-model="userListPage.free" clearable placeholder="请选择">
+            <el-select v-model="userListPage.free" clearable placeholder="请选择" style="width:100px;">
               <el-option label="否" value="0"> </el-option>
               <el-option label="是" value="1"> </el-option>
             </el-select>
-          </el-form-item> -->
+          </el-form-item>
           <el-form-item>
             <el-button
               type="primary"
@@ -112,7 +112,7 @@
             <el-button size="mini" type="primary" >添加</el-button>
           </el-form-item> -->
         </el-form>
-        <el-table :data="managerBookPageData" ref="multipleTable" tooltip-effect="dark"  element-loading-text="拼命加载中" border fit stripe highlight-current-row>
+        <el-table :data="managerBookPageData" ref="multipleTable" tooltip-effect="dark" height="750"  element-loading-text="拼命加载中" border fit stripe highlight-current-row>
           <!-- @selection-change="handleSelectionChange" -->
           <!-- <el-table-column
             type="selection"
@@ -292,7 +292,7 @@ export default {
           this.topicBookPage()
           this.$message({
               type: 'success',
-              message: '添加成功!'
+              message: '操作成功!'
           });
         }else{
           this.$message.error(res.msg);
@@ -300,6 +300,7 @@ export default {
       })
     },
     topicBookSaveBacth(){
+      this.topicBookSaveBacthPage = []
       // this.topicBookSaveBacthPage = this.topicBookPageData
       this.topicBookPageData.map((item,index) => {
         let newArr = {}
@@ -308,6 +309,7 @@ export default {
         newArr.topicId = this.columnIds
         this.topicBookSaveBacthPage.push(newArr)
       })
+      
       this.topicBookSaveBacthPage = this.unique(this.topicBookSaveBacthPage,'bookId')
       console.log(this.topicBookSaveBacthPage)
       topicBookSaveBacth(this.topicBookSaveBacthPage).then(res => {
@@ -315,7 +317,7 @@ export default {
           this.topicBookPage()
           this.$message({
               type: 'success',
-              message: '添加成功!'
+              message: '操作成功!'
           });
         }else{
           this.$message.error(res.msg);

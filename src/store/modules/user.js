@@ -13,7 +13,8 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    hostPath:'',
   },
 
   mutations: {
@@ -40,7 +41,10 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
-    }
+    },
+    SET_HOSTPATH: (state, hostPath) => {
+      state.hostPath = hostPath
+    },
   },
 
   actions: {

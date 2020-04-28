@@ -8,38 +8,44 @@
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="名称:" prop="name">
-          <el-input class="article-textarea" placeholder="请输入名称" maxlength="20" style="width:215px;" v-model.trim="dialogData.name"></el-input>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="名称:" prop="dictName">
+          <el-input class="article-textarea" placeholder="请输入名称" maxlength="30" style="width:215px;" v-model.trim="dialogData.dictName"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="简介:" prop="introduce">
-          <el-input type="textarea"  :rows="2"  placeholder="请输入简介" maxlength="100" style="width:215px;"  v-model.trim="dialogData.introduce"></el-input>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="编码:" prop="dictCode">
+          <el-input class="article-textarea"  placeholder="请输入编码" maxlength="20" style="width:215px;"  v-model.trim="dialogData.dictCode"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="是否启用:">
+          <!-- <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;"  v-model="fishEditData.disable"></el-input> -->
+          <el-radio v-model="dialogData.enable" :label="1" border>启用</el-radio>
+          <el-radio v-model="dialogData.enable" :label="0" border>停用</el-radio>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="排序:" prop="orderNum">
           <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
-        <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="100px" label="图片:">
-          <el-upload
-            class="avatar-uploader"
-            :action="FileUpload"
-            :show-file-list="false"
-            :headers="{'Authorization':tokenData}"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
+
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
           <el-button type="success" @click="addManagerBtn">确定</el-button>
         </div>
       </el-form>
     </el-dialog>
-    <el-form  size="small" inline :model="classifiedsListPage">
-      <el-form-item label="名称:">
-        <el-input placeholder="名称" v-model.trim="classifiedsListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
-      </el-form-item>
-      <el-form-item>
+    <el-form  size="small" inline :model="userListPage">
+      <!-- <el-form-item label="名称:">
+        <el-input placeholder="名称" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
+      </el-form-item> -->
+      
+      <!-- <el-form-item label="注册时间">
+        <el-date-picker
+          v-model="registrationTime"
+          type="daterange"
+          value-format="yyyy-MM-dd"
+          @keyup.enter.native="searchBtn"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </!--> 
+      <!-- <el-form-item>
         <el-button
           type="primary"
           icon="el-icon-search"
@@ -48,47 +54,52 @@
           style="font-size: 16px"
           @click="searchBtn()"
         />
+      </el-form-item> -->
+      <el-form-item label="提示:">
+        <p style="font-size:12px;color:#999;">因为这个页面是配置功能模块，现在只有小说模块已经基本开发完成，其他功能模块完全没有开发，即使开启了其他模块 app端也是没有内容显示，所以没必要开启！</p>
       </el-form-item>
       <el-form-item style="margin-bottom:15px;float:right;">
         <el-button type="primary" @click="openEditOrAdd('add')" >添加分类</el-button>
       </el-form-item>
     </el-form>
     
-    <el-table :data="classifiedsList" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
+    <el-table :data="userList" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
       <el-table-column align="center" label='#' :min-width="60">
         <template slot-scope="scope">
           {{scope.$index + 1}}
         </template>
       </el-table-column>
-      <el-table-column label='创建时间' align="center" :min-width="160">
+      
+      <el-table-column label='创建时间' :min-width="160">
         <template slot-scope="scope">
           <!-- {{scope.row.createDate | initTime}} -->
           {{scope.row.createTime}}
         </template>
       </el-table-column>
-      <el-table-column label="名称" align="center" prop='name' :min-width="150"></el-table-column>
-      <el-table-column label='图片' :min-width="110" align="center">
+      <el-table-column label="名称" prop='dictName' :min-width="150"></el-table-column>
+      <el-table-column label="dictCode" prop='dictCode' :min-width="150"></el-table-column>
+      <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column>
+      
+      <el-table-column label="是否启用" :min-width="100" >
         <template slot-scope="scope">
-          <el-popover
-            placement="right"
-            title=""
-            width="300"
-            trigger="hover">
-            <img :src="scope.row.iconUrlAll" style="width:100%;height:auto;">
-            <img :src="scope.row.iconUrlAll" slot="reference" style="width:auto;height:80px;">
-          </el-popover>
+          <!-- <span v-if="scope.row.enable == 0">禁用</span>
+          <span v-if="scope.row.enable == 1">启用</span> -->
+          <div style="height:21px;">
+            <el-switch
+              style="display: block"
+              v-model="scope.row.enable"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-text="启用"
+              inactive-text="" 
+              :active-value="1"
+              :inactive-value="0"
+              @change="dictEaableFn(scope.row)">
+            </el-switch>
+          </div>
           
         </template>
       </el-table-column>
-      <el-table-column label="简介" align="center" prop='introduce' :min-width="150"></el-table-column>
-      <el-table-column label="排序" align="center" prop='orderNum' :min-width="60"></el-table-column>
-      
-      <!-- <el-table-column label="账户状态" :min-width="150">
-        <template slot-scope="scope">
-          <span v-if="scope.row.status == 0">正常</span>
-          <span v-if="scope.row.status == 1">禁用</span>
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" fixed="right" label="操作" width="250">
         <template slot-scope="scope">
           <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
@@ -104,45 +115,44 @@
         background
         layout="prev, pager, next"
         :page-size="fishListPageLimit"
-        :current-page="classifiedsListPage.pageNum"
+        :current-page="userListPage.pageNum"
         :total="total"
       ></el-pagination>
   </div>
 </template>
 
 <script>
-import { categoryList,addCategory,delCategory,fileUpload } from '@/api/category.js';
+import { dictClassifyList,dictClassifySaveOrUpdate,dictDelete,dictClassifyEnable } from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
-
-import { validatorColumnName,validatorOrderNum } from '@/utils/validator'
+import { validatorColumnName,validatorOrderNum,validatorEncoded } from '@/utils/validator'
 export default {
-  name: 'classifiedList',
+  name: 'classificationPageMan',
   directives: { elDragDialog },
   data() {
     return {
-      classifiedsList: [],
+      userList: [],
       fishListPageLimit:10,
       total: 1,
-      classifiedsListPage: {
+      userListPage: {
         pageNum: 1,
         pageSize: 10,
       },
       registrationTime:[],
       dialogTableVisible:false,
       dialogData:{
-        name:'',
-        introduce:'',
-        orderNum:''
+        dictCode:'',
+        dictName:'',
+        enable:0,
+        orderNum:'',
       },
       dialogRules: {
-        name: [{ required: true, trigger: 'blur',validator: validatorColumnName }],
-        introduce: [{ required: true, trigger: 'blur',message:'请输入简介'  }],
-        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum  }]
+        dictName: [{ required: true, trigger: 'blur',validator: validatorColumnName  }],
+        dictCode: [{ required: true, trigger: 'blur',validator: validatorEncoded  }],
+        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum   }]
       },
-      imgUploadSrc:'',
       dialogTitle:'添加'
     }
   },
@@ -152,25 +162,33 @@ export default {
     }
   },
   created() {
-    this.getclassifiedsList();
+    this.dictClassifyList();
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      this.imgUploadSrc = res.data.all_url
-      this.dialogData.iconUrl = res.data.short_url;
+    dictEaableFn(row){
+      console.log(row)
+      let flag = 0
+      if(row.enable == 1){
+        flag = 0
+      }else{
+        flag = 1
+      }
+      console.log(flag)
+      this.dictClassifyEnable(row.id,row.enable)
     },
-    beforeAvatarUpload(file) {
-      var testmsg = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const isJPG = testmsg == "jpg" || testmsg == "JPG" || testmsg == "png" || testmsg == "PNG" || testmsg == "bpm" || testmsg == "JPEG" || testmsg == "jpeg" || testmsg == "BPM"
-      const isLt2M = file.size / 1024 / 1024 < 0.4;
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 jpg,png,bpm 格式!');
+    dictClassifyEnable(ids,flag){
+      const data = {
+        enable:flag,
+        id:ids
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 400kb!');
-      }
-      return isJPG && isLt2M;
+      dictClassifyEnable(data).then(res => {
+        // console.log(res.data)
+        this.$message({
+            type: 'success',
+            message: '修改成功!'
+        });
+        this.dictClassifyList();
+      })
     },
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
@@ -178,38 +196,32 @@ export default {
       if(flag == 'edit'){
         this.dialogTitle = '编辑'
         this.dialogData.id = row.id
-        this.dialogData.name = row.name
-        this.dialogData.introduce = row.introduce
+        this.dialogData.dictCode = row.dictCode
+        this.dialogData.dictName = row.dictName
+        this.dialogData.enable = row.enable
         this.dialogData.orderNum = row.orderNum
-        this.dialogData.iconUrl = row.iconUrl
-        this.imgUploadSrc = row.iconUrlAll
       }else{
+        delete this.dialogData.id
         this.dialogTitle = '添加'
-        this.dialogData.id = ''
-        this.dialogData.name = ''
-        this.dialogData.introduce = ''
+        this.dialogData.dictCode = ''
+        this.dialogData.dictName = ''
+        this.dialogData.enable = 0
         this.dialogData.orderNum = ''
-        this.dialogData.iconUrl = ''
-        this.imgUploadSrc = ''
       }
     },
     searchBtn(){
-      this.classifiedsListPage.pageNum = 1
-      this.getclassifiedsList()
+      this.userListPage.pageNum = 1
+      this.dictClassifyList()
     },
     pageChange (p) {
-      this.classifiedsListPage.pageNum = p
-      this.getclassifiedsList()
+      this.userListPage.pageNum = p
+      this.dictClassifyList()
     },
-    getclassifiedsList() {
-      this.listLoading = true
-      if(!this.classifiedsListPage.name){
-        delete this.classifiedsListPage.name
-      }
-      categoryList(this.classifiedsListPage).then(res => {
+    dictClassifyList() {
+
+      dictClassifyList().then(res => {
         // console.log(res.data)
-        this.classifiedsList = res.data.list
-        this.total = res.data.total
+        this.userList = res.data
         
       })
     },
@@ -217,20 +229,14 @@ export default {
       
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          if(this.dialogData.iconUrl == ''){
-            this.$message.error('请上传分类图片！');
-            return
-          }
-          addCategory(this.dialogData).then(res => {
+          dictClassifySaveOrUpdate(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.id = ''
-              this.dialogData.name = ''
-              this.dialogData.introduce = ''
+              this.dialogData.dictCode = ''
+              this.dialogData.dictName = ''
+              this.dialogData.enable = 0
               this.dialogData.orderNum = ''
-              this.dialogData.iconUrl = ''
-              this.imgUploadSrc = ''
-              this.getclassifiedsList()
+              this.dictClassifyList()
               this.$message({
                   type: 'success',
                   message: this.dialogTitle + '成功!'
@@ -264,9 +270,9 @@ export default {
       const data = {
         id:id
       }
-      delCategory(data).then(res => {
+      dictDelete(data).then(res => {
         if(res.code == 200){
-              this.getclassifiedsList()
+              this.dictClassifyList()
               this.$message({
                   type: 'success',
                   message: '删除成功!'

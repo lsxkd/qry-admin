@@ -178,7 +178,7 @@ export default {
               this.managerBookPage()
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: '操作成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -194,10 +194,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(bookIds,bookContentIds)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
       }).catch(() => {
         this.$message({
           type: 'info',

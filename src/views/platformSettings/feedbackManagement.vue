@@ -8,25 +8,24 @@
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="是否添加:" prop="state">
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="是否处理:" prop="state">
           <el-radio-group v-model="dialogData.state">
-            <el-radio label="1">已添加</el-radio>
-            <el-radio label="2">未添加</el-radio>
+            <el-radio label="0">未处理</el-radio>
+            <el-radio label="1">已处理</el-radio>
           </el-radio-group>
         </el-form-item>
         
         <div style="text-align:center;margin-top:40px;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="success" @click="applyBookAudit">确定</el-button>
+          <el-button type="success" @click="feedbackAudit">确定</el-button>
         </div>
       </el-form>
     </el-dialog>
-    <el-form  size="small" inline :model="applyBookListPage">
+    <el-form  size="small" inline :model="userListPage">
       <el-form-item label="处理状态:">
-        <el-select v-model="applyBookListPage.state" clearable placeholder="请选择">
+        <el-select v-model="userListPage.state" clearable placeholder="请选择">
           <el-option label="未处理" value="0"> </el-option>
-          <el-option label="已处理已添加" value="1"> </el-option>
-          <el-option label="已处理未添加" value="2"> </el-option>
+          <el-option label="已处理" value="1"> </el-option>
         </el-select>
       </el-form-item>
             
@@ -39,38 +38,46 @@
           style="font-size: 16px"
           @click="searchBtn()"
         />
-      </el-form-item>
-      
-    </el-form>    
-    <el-table :data="applyBookList" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
+        </el-form-item>
+    </el-form>
+    
+    <el-table :data="userList" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
       <el-table-column align="center" label='#' :min-width="60">
         <template slot-scope="scope">
           {{scope.$index + 1}}
         </template>
       </el-table-column>
+      
       <el-table-column label='创建时间' :min-width="160">
         <template slot-scope="scope">
           <!-- {{scope.row.createDate | initTime}} -->
           {{scope.row.createTime}}
         </template>
       </el-table-column>
-      <el-table-column label="小说名称" prop='novelName' :min-width="150"></el-table-column>
-      <el-table-column label="小说作者" prop='novelAuthor' :min-width="150"></el-table-column>
-      <el-table-column label="用户ID" prop='userId' :min-width="150"></el-table-column>
-      
-      <el-table-column label="处理状态" :min-width="150">
+      <el-table-column label='联系方式类型' :min-width="160">
         <template slot-scope="scope">
-          <span v-if="scope.row.state == 0">未处理</span>
-          <span v-if="scope.row.state == 1">已处理已添加</span>
-          <span v-if="scope.row.state == 2">已处理未添加</span>
+          <span v-if="scope.row.contactType == 1">手机号</span>
+          <span v-if="scope.row.contactType == 2">固定电话</span>
+          <span v-if="scope.row.contactType == 3">电子邮件</span>
+          <span v-if="scope.row.contactType == 4">微信</span>
+          <span v-if="scope.row.contactType == 5">QQ</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="余额" prop='coinNum' :min-width="150"></el-table-column> -->
+      <el-table-column label="联系方式" prop='contact' :min-width="150"></el-table-column>
+      <el-table-column label="问题内容" prop='problemContent' :min-width="150"></el-table-column>
+      <el-table-column label="问题类型" prop='problemType' :min-width="150"></el-table-column>
+      <el-table-column label="用户ID" prop='userId' :min-width="150"></el-table-column>
+      <el-table-column label="状态" :min-width="100" >
+        <template slot-scope="scope">
+          <el-tag type="danger" v-if="scope.row.state == 0">未处理</el-tag>
+          <el-tag type="success" v-if="scope.row.state == 1">已处理</el-tag>     
+        </template>
+      </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="250">
         <template slot-scope="scope">
           <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
           <!-- <el-button type="primary" size="small">发行记录</el-button> -->
-          <el-button type="primary" size="small" icon="el-icon-edit" v-if="scope.row.state != 1" @click="openEditOrAdd(scope.row.id)">处理</el-button>
+          <el-button type="primary" size="small" icon="el-icon-edit" @click="openEditOrAdd(scope.row.id)">处理</el-button>
           <el-button type="danger" size="small" icon="el-icon-edit" @click="delConfirm(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -81,59 +88,62 @@
         background
         layout="prev, pager, next"
         :page-size="fishListPageLimit"
-        :current-page="applyBookListPage.pageNum"
+        :current-page="userListPage.pageNum"
         :total="total"
       ></el-pagination>
   </div>
 </template>
 
 <script>
-import { applyBookPage,applyBookAudit,applyBookDelete } from '@/api/user.js';
+import { feedbackPage,feedbackAudit,feedbackDelete } from '@/api/category.js';
 import moment from 'moment';
+import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+import { getToken } from '@/utils/auth'
 export default {
-  name: 'applyNovelManagement',
+  name: 'feedbackManagement',
   directives: { elDragDialog },
   data() {
     return {
-      applyBookList: [],
+      userList: [],
       fishListPageLimit:10,
       total: 1,
-      applyBookListPage: {
+      userListPage: {
         pageNum: 1,
         pageSize: 10,
-        state:'',
       },
       registrationTime:[],
       dialogTableVisible:false,
       dialogData:{
-        id:'',
         state:'',
       },
       dialogRules: {
-        state: [{ required: true, trigger: 'blur',message:'请选择是否已添加' }]
+        state: [{ required: true, trigger: 'blur',message:'请选择是否处理' }],
       },
+      
+    }
+  },
+  computed: {
+    tokenData(){
+      return getToken()
     }
   },
   created() {
-    this.applyBookPage();
+    this.feedbackPage();
   },
   methods: {
-    searchBtn(){
-      this.dialogData.pageNum = 1
-      this.applyBookPage()
-    },
     openEditOrAdd(id){
       this.dialogTableVisible = true
       this.dialogData.id = id
+      this.dialogData.state = ''
     },
-    applyBookAudit(){
+    feedbackAudit(){
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          applyBookAudit(this.dialogData).then(res => {
+          feedbackAudit(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-                  this.applyBookPage()
+                  this.feedbackPage()
                   this.$message({
                       type: 'success',
                       message: '处理成功!'
@@ -145,26 +155,30 @@ export default {
         }
       })
     },
-    pageChange (p) {
-      this.applyBookListPage.pageNum = p
-      this.applyBookPage()
+    searchBtn(){
+      this.userListPage.pageNum = 1
+      this.feedbackPage()
     },
-    applyBookPage() {
-      this.listLoading = true
-      applyBookPage(this.applyBookListPage).then(res => {
+    pageChange (p) {
+      this.userListPage.pageNum = p
+      this.feedbackPage()
+    },
+    feedbackPage() {
+
+      feedbackPage(this.userListPage).then(res => {
         // console.log(res.data)
-        this.applyBookList = res.data.list
+        this.userList = res.data.list
         this.total = res.data.total
-        
       })
     },
+
     delConfirm(id){
       this.$confirm('确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.applyBookDelete(id)
+        this.delManagers(id)
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -176,13 +190,13 @@ export default {
         });          
       });
     },
-    applyBookDelete(id){
+    delManagers(id){
       const data = {
         id:id
       }
-      applyBookDelete(data).then(res => {
+      feedbackDelete(data).then(res => {
         if(res.code == 200){
-              this.applyBookPage()
+              this.feedbackPage()
               this.$message({
                   type: 'success',
                   message: '删除成功!'
@@ -218,5 +232,30 @@ export default {
 .el-table--striped .el-table__body tr.el-table__row--striped td {
   background: #f0f9eb;
 } */
+</style>
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>
 

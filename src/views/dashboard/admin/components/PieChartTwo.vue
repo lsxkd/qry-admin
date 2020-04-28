@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pieChartTwo">
     <!-- <div style="text-align:center;margin-bottom:20px;">
       <el-radio @change='radioBtn' v-model="userNumber" size="mini" label="6" border>最近7天</el-radio>
       <el-radio @change='radioBtn' v-model="userNumber" size="mini" label="13" border>最近14天</el-radio>
@@ -151,3 +151,8 @@ export default {
   }
 }
 </script>
+<style >
+  .pieChartTwo{
+    padding:20px 0;
+  }
+</style>

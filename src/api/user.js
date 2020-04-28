@@ -5,7 +5,8 @@ export function managersList(data) { //管理员列表
   return request({
       url: 'admin/page',
       method: 'post',
-      data
+      data,
+      encryptedOrNot:true,
   })
 }
 
@@ -14,7 +15,8 @@ export function addManagers(data) { //添加管理员
   return request({
       url: 'admin/save',
       method: 'post',
-      data
+      data,
+      encryptedOrNot:true,
   })
 }
 
@@ -84,6 +86,15 @@ export function applyBookDelete(data) {
 export function managerAppuserList(data) { 
   return request({
       url: '/manager/appuser/page',
+      method: 'post',
+      data
+  })
+}
+
+// 用户金币流水
+export function managerUserCoinLog(data) { 
+  return request({
+      url: '/manager/user/coin/log',
       method: 'post',
       data
   })

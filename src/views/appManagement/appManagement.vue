@@ -40,7 +40,7 @@
       
     </el-form>
 
-    <el-dialog title="添加版本更新" v-el-drag-dialog :visible.sync="dialogVisible" width="70%">
+    <el-dialog :title="dialogTitle" v-el-drag-dialog :visible.sync="dialogVisible" width="70%">
       <el-form
         :model="ruleForm"
         status-icon
@@ -275,6 +275,7 @@ export default {
           label:'强制更新',
         },
       ],
+      dialogTitle:"添加"
     }
   },
 
@@ -308,8 +309,10 @@ export default {
       console.log(i)
       console.log(flag)
       if (i.id && flag == 'edit') {
+        this.dialogTitle = '编辑'
         this.ruleForm = i
       }else{
+        this.dialogTitle = '添加'
         //   this.ruleForm = {}
       }
       this.dialogVisible = true

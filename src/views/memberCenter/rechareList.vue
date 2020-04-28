@@ -3,7 +3,7 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加"
+        :title="dialogTitle"
         :visible.sync="dialogTableVisible"
         width='500px'
       >
@@ -12,16 +12,16 @@
           <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" v-model.trim="dialogData.coinComposeName"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="金额:" prop="amount">
-          <el-input class="article-textarea"  placeholder="请输入金额" style="width:215px;"  v-model.trim="dialogData.amount"></el-input>
+          <el-input class="article-textarea"  placeholder="请输入金额" style="width:215px;" maxlength="9" @blur="changeMoney(dialogData.amount)" @input.native="changeMoney(dialogData.amount)"  v-model.trim="dialogData.amount"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="金币数量:" prop="coinNum">
-          <el-input class="article-textarea" placeholder="请输入金币数量" style="width:215px;"  v-model.trim="dialogData.coinNum"></el-input>
+          <el-input class="article-textarea" placeholder="请输入金币数量" style="width:215px;" maxlength="9" @blur="handleInput(dialogData.coinNum)" @input.native="handleInput(dialogData.coinNum)"  v-model.trim="dialogData.coinNum"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="赠送金币数量:" >
-          <el-input class="article-textarea"  placeholder="请输入赠送金币数量" style="width:215px;"  v-model.trim="dialogData.coinExtNum"></el-input>
+          <el-input class="article-textarea"  placeholder="请输入赠送金币数量" style="width:215px;" maxlength="9" @blur="handleInputCoinExtNum(dialogData.coinExtNum)" @input.native="handleInputCoinExtNum(dialogData.coinExtNum)"  v-model.trim="dialogData.coinExtNum"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:" prop="orderNum">
-          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
+          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
 
         <div style="text-align:center;">
@@ -31,9 +31,9 @@
       </el-form>
     </el-dialog>
     <el-form  size="small" inline :model="userListPage">
-      <el-form-item label="名称:">
+      <!-- <el-form-item label="名称:">
         <el-input placeholder="名称" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
-      </el-form-item>
+      </el-form-item> -->
       
       <!-- <el-form-item label="注册时间">
         <el-date-picker
@@ -46,7 +46,7 @@
           end-placeholder="结束日期">
         </el-date-picker>
       </!--> 
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button
           type="primary"
           icon="el-icon-search"
@@ -55,7 +55,7 @@
           style="font-size: 16px"
           @click="searchBtn()"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item style="margin-bottom:15px;float:right;">
         <el-button type="primary" @click="openEditOrAdd('add')" >添加</el-button>
       </el-form-item>
@@ -109,6 +109,7 @@
 import { coincomposeList,addCoincompose,delCoincompose } from '@/api/category.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+import { validatorColumnName,validatorOrderNum } from '@/utils/validator'
 export default {
   name: 'rechareList',
   directives: { elDragDialog },
@@ -131,22 +132,47 @@ export default {
         orderNum:'',
       },
       dialogRules: {
-        coinComposeName: [{ required: true, trigger: 'blur',message:'请输入名称' }],
+        coinComposeName: [{ required: true, trigger: 'blur',validator: validatorColumnName }],
         amount: [{ required: true, trigger: 'blur',message:'请输入金额'  }],
         coinNum: [{ required: true, trigger: 'blur',message:'请输入金币数量' }],
-        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序序号' }]
+        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum }]
       },
-      
+      dialogTitle:'添加'
     }
   },
   created() {
     this.getUserList();
   },
   methods: {
+    handleInputCoinExtNum(e){
+      this.dialogData.coinExtNum = e.replace(/[^\d]/g,'');
+    },
+    handleInput(e) {
+      this.dialogData.coinNum = e.replace(/[^\d]/g,'');
+    },
+    changeMoney(val) {
+        val = val.replace(/(^\s*)|(\s*$)/g, "")
+        if(!val) {
+            this.a = "";
+            return
+        }
+        var reg = /[^\d.]/g
 
+        // 只能是数字和小数点，不能是其他输入
+        val = val.replace(reg, "")
+
+        // 保证第一位只能是数字，不能是点
+        val = val.replace(/^\./g, "");
+        // 小数只能出现1位
+        val = val.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        // 小数点后面保留2位
+        val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        this.dialogData.amount = val;
+    },
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
       if(flag == 'edit'){
+        this.dialogTitle = '编辑'
         this.dialogData.id = row.id
         this.dialogData.coinComposeName = row.coinComposeName
         this.dialogData.amount = row.amount
@@ -154,6 +180,7 @@ export default {
         this.dialogData.coinNum = row.coinNum
         this.dialogData.coinExtNum = row.coinExtNum
       }else{
+        this.dialogTitle = '添加'
         delete this.dialogData.id
         this.dialogData.coinComposeName = ''
         this.dialogData.amount = ''
@@ -198,7 +225,7 @@ export default {
               this.getUserList()
               this.$message({
                   type: 'success',
-                  message: '成功!'
+                  message: this.dialogTitle + '成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -214,10 +241,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
       }).catch(() => {
         this.$message({
           type: 'info',

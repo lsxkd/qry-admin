@@ -12,16 +12,27 @@ export default {
 
     managersAdmin:'后台管理员管理',
     managersList:'管理员列表',
-    applyNovelManagement:'申请上架小说管理',
+    
 
     managerClassified:'分类管理',
     classifiedList:'分类列表',
-    columnList:'栏目管理',
 
-    novelManagement:'小说管理',
+    appLayoutManagement:'app版面配置',
+    columnList:'书城页面配置',
+    classificationPageMan:'分类页面配置',
+
+
+
+    novelManagement:'基础数据管理',
     novelManagementList:'小说列表',
     novelChapterList:'小说章节列表',
     novelChapterContent:'小说章节内容编辑',
+
+    platformSettings:"平台设置",
+    goldRuleSettings:'金币规则设置',
+    feedbackManagement:'反馈帮助管理',
+    applyNovelManagement:'申请上架小说管理',
+    activityManagement:'活动管理',
 
     bannerList:'banner管理',
     

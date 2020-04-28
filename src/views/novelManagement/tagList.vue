@@ -3,13 +3,14 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加"
+        :title="dialogTitle"
         :visible.sync="dialogTableVisible"
+        v-if="dialogTableVisible"
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="标签名称:" prop="coinComposeName">
-          <el-input class="article-textarea" placeholder="请输入标签名称" style="width:215px;" v-model.trim="dialogData.tag"></el-input>
+        <el-form-item style="margin-bottom: 50px;" label-width="120px" label="标签名称:" prop="tag">
+          <el-input class="article-textarea" placeholder="请输入标签名称" style="width:215px;" maxlength="20" v-model.trim="dialogData.tag"></el-input>
         </el-form-item>
         
 
@@ -92,6 +93,7 @@
 import { tagList,addTag,delTag } from '@/api/category.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+import { validatorColumnName } from '@/utils/validator'
 export default {
   name: 'tagList',
   directives: { elDragDialog },
@@ -110,9 +112,9 @@ export default {
         tag:'',
       },
       dialogRules: {
-        tag: [{ required: true, trigger: 'blur',message:'请输入标签名称' }],
+        tag: [{ required: true, trigger: 'blur',validator: validatorColumnName }],
       },
-      
+      dialogTitle:'添加',
     }
   },
   created() {
@@ -123,8 +125,13 @@ export default {
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
       if(flag == 'edit'){
+        this.dialogTitle = '编辑'
         this.dialogData.id = row.id
         this.dialogData.tag = row.tag
+      }else{
+        this.dialogTitle = '添加'
+        delete this.dialogData.id
+        this.dialogData.tag = ''
       }
     },
     searchBtn(){
@@ -174,10 +181,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
       }).catch(() => {
         this.$message({
           type: 'info',

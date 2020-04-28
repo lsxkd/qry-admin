@@ -5,6 +5,7 @@
         v-el-drag-dialog
         title="添加/编辑栏目"
         :visible.sync="dialogTableVisible"
+        v-if='dialogTableVisible'
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
@@ -12,7 +13,7 @@
           <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" v-model.trim="dialogData.topicName"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="排序:" prop="orderNum">
-          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="11" v-model.trim="dialogData.orderNum"></el-input>
+          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.trim="dialogData.orderNum"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="是否启用:" prop="enable">
           <el-select v-model="dialogData.enable" clearable placeholder="请选择" style="width:215px;">
@@ -23,21 +24,26 @@
 
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="内容类型:" prop="contentType" v-if="columnOneOrTwo == 2">
           <el-select v-model="dialogData.contentType" @change="selectChange" clearable placeholder="请选择" style="width:215px;">
-            <el-option label="小说" value="1"> </el-option>
-            <el-option label="banner" value="2"> </el-option>
+            <el-option label="小说" :value="1" > </el-option>
+            <el-option label="banner" :value="2" v-if="!zijiFlag"> </el-option>
+            <el-option label="栏目" :value="3" v-if="!zijiFlag"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="展示类型:" prop="showType" v-if="columnOneOrTwo == 2&&dialogData.contentType==1">
           <el-select v-model="dialogData.showType" @change="selectChange" clearable placeholder="请选择" style="width:215px;">
-            <el-option label="三列" value="1"> </el-option>
-            <el-option label="一行两列" value="2"> </el-option>
-            <el-option label="单个两列" value="3"> </el-option>
-            <el-option label="一竖" value="4"> </el-option>
+            <!-- <el-option label="三列" :value="1"> </el-option>
+            <el-option label="一行两列" :value="2"> </el-option>
+            <el-option label="单个两列" :value="3"> </el-option> -->
+            <el-option label="一竖" :value="4" v-if="!zijiFlag"> </el-option>
+            <el-option label="一行" :value="5" v-if="!zijiFlag"> </el-option>
+            <el-option label="多子" :value="6" > </el-option>
           </el-select>
-          <p class="form-tips" v-show="dialogData.showType == 1">请至少添加<span>3</span>部小说，否则不会显示！</p>
-          <p class="form-tips" v-show="dialogData.showType == 2">请至少添加<span>5</span>部小说，否则不会显示！</p>
-          <p class="form-tips" v-show="dialogData.showType == 3">请至少添加<span>3</span>部小说，否则不会显示！</p>
-          <p class="form-tips" v-show="dialogData.showType == 4">请至少添加<span>3</span>部小说，否则不会显示！</p>
+          <!-- <p class="form-tips" v-show="dialogData.showType == 1">请至少添加<span>3</span>部小说</p>
+          <p class="form-tips" v-show="dialogData.showType == 2">请至少添加<span>5</span>部小说</p>
+          <p class="form-tips" v-show="dialogData.showType == 3">请至少添加<span>3</span>部小说</p> -->
+          <p class="form-tips" v-show="dialogData.showType == 4">请至少添加<span>1</span>部小说</p>
+          <p class="form-tips" v-show="dialogData.showType == 5">请至少添加<span>1</span>部小说</p>
+          <p class="form-tips" v-show="dialogData.showType == 6">请至少添加<span>1</span>个栏目,每个栏目至少选择<span>1</span>部小说</p>
         </el-form-item>
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
@@ -47,7 +53,7 @@
     </el-dialog>
     <el-form  size="small" inline>
       <el-form-item style="margin-bottom:15px;">
-        <el-button type="primary" @click="openEditOrAdd('add')" >添加一级栏目</el-button>
+        <!-- <el-button type="primary" @click="openEditOrAdd('add')" >添加一级栏目</el-button> -->
         <el-button type="success" @click="refreshBtn">刷新栏目</el-button>
       </el-form-item>
     </el-form>
@@ -59,7 +65,7 @@
             <template slot="title">
               <div style="display:flex;justify-content: space-between;padding-right:25px;">
                 <div>
-                  <i class="el-icon-menu"></i>
+                  <i class="el-icon-s-grid"></i>
                   <span slot="title">{{item.topicName}} 
                     <span style="color:#f56c6c;font-size:12px;" v-if="item.enable == 0">
                       <!-- <svg-icon icon-class="stopUse"></svg-icon> -->
@@ -69,15 +75,14 @@
                 </div>
                 <div>
                   <el-button type="text" size='mini' @click.stop="openEditOrAdd('add',item,2)">添加</el-button>
-                  <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',item)">编辑</el-button>
-                  <el-button type="text" size='mini' @click.stop="delConfirm(item.id)">删除</el-button>
+                  <!-- <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',item)">编辑</el-button>
+                  <el-button type="text" size='mini' @click.stop="delConfirm(item.id)">删除</el-button> -->
                 </div>
               </div>
               
             </template>
-            <el-menu-item-group>
-              <!-- <span slot="title">分组一</span> -->
-              <el-menu-item  :index="item.id+'-'+em.id" v-for="(em,indexs) in item.childs" :key="indexs + 'a'" @click="menuItemBtn(em.id,em.contentType)">
+            <!-- <el-menu-item-group :index="item.id+'-'+em.id" v-for="(em,indexs) in item.childs" :key="indexs + 'a'" @click="menuItemBtn(em.id,em.contentType)" v-show="em.contentType == 1|| em.contentType==2">
+              <el-menu-item  >
                 <div style="display:flex;justify-content: space-between;">
                   <div> 
                     <i class="el-icon-s-unfold"></i>
@@ -85,13 +90,42 @@
                   </div>
                   
                   <div>
+                    <el-button type="text" size='mini' v-if="em.contentType == 3" @click.stop="openEditOrAdd('add',em,2)">添加</el-button>
                     <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',em,2)">编辑</el-button>
                     <el-button type="text" size='mini' @click.stop="delConfirm(em.id)">删除</el-button>
                   </div>
                   
                 </div>
               </el-menu-item>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
+            <el-submenu   :index="item.id+'-'+em.id" v-for="(em,indexs) in item.childs" :key="indexs + 'b'" @click.native="menuItemBtn(em.id,em.contentType)">
+              <template slot="title">
+                <div style="display:flex;justify-content: space-between;padding-left:20px;">
+                  <div> 
+                    <i class="el-icon-menu"></i>
+                    <span>{{em.topicName}} <span style="color:#f56c6c;font-size:12px;" v-if="em.enable == 0">(已停用)</span> </span>
+                  </div>
+                  <div>
+                    <el-button type="text" size='mini' v-if="em.contentType == 3" @click.stop="openEditOrAdd('add',em,2,em)">添加</el-button>
+                    <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',em,2,item)">编辑</el-button>
+                    <el-button type="text" size='mini' @click.stop="delConfirm(em.id)">删除</el-button>
+                  </div>
+                </div>
+              </template>
+              <el-menu-item :index="em.id+'-'+m.id" v-for="(m,indexsm) in em.childs" :key="indexsm + 'c'" @click.stop.native="menuItemBtn(m.id,m.contentType)">
+                <div style="display:flex;justify-content: space-between;padding-left:20px;">
+                  <div> 
+                    <i class="el-icon-s-unfold"></i>
+                    <span>{{m.topicName}} <span style="color:#f56c6c;font-size:12px;" v-if="m.enable == 0">(已停用)</span> </span>
+                  </div>
+                  <div>
+                    <el-button type="text" size='mini' v-if="m.contentType == 3" @click.stop.native="openEditOrAdd('add',m,2,em)">添加</el-button>
+                    <el-button type="text" size='mini' @click.stop="openEditOrAdd('edit',m,2,em)">编辑</el-button>
+                    <el-button type="text" size='mini' @click.stop="delConfirm(m.id)">删除</el-button>
+                  </div>
+                </div>
+              </el-menu-item>
+            </el-submenu>
           </el-submenu>
         </el-menu>
       </div>
@@ -119,9 +153,9 @@ import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
-import BannnerList from './bannerList'
-import ColumnBookedit from './columnBookedit'
-
+import BannnerList from '../novelManagement/bannerList'
+import ColumnBookedit from '../novelManagement/columnBookedit'
+import { validatorColumnName,validatorOrderNum } from '@/utils/validator'
 export default {
   name: 'columnList',
   directives: { elDragDialog },
@@ -141,9 +175,9 @@ export default {
         contentType:''
       },
       dialogRules: {
-        topicName: [{ required: true, trigger: 'blur',message:'请输入栏目名称' }],
+        topicName: [{ required: true, trigger: 'blur',validator: validatorColumnName }],
         enable: [{ required: true, trigger: 'blur',message:'请选择是否启用'  }],
-        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序'  }],
+        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum  }],
         contentType: [{ required: true, trigger: 'blur',message:'请选择内容类型'  }],
         showType: [{ required: true, trigger: 'blur',message:'请选择展示类型'  }],
       },
@@ -154,6 +188,7 @@ export default {
       activeMenuId:'',
       activeSubMenuId:[],
       columnOneOrTwo:1,//添加编辑是一级还是二级栏目，1是一级，2是二级
+      zijiFlag:false,
     }
   },
   computed: {
@@ -200,9 +235,15 @@ export default {
     },
 
 
-    openEditOrAdd(flag,row,columnOneOrTwos){
+    openEditOrAdd(flag,row,columnOneOrTwos,parentLevel){
       this.dialogTableVisible = true
-      
+      console.log(parentLevel)
+      if(parentLevel&&parentLevel.contentType == 3){
+        this.zijiFlag = true
+      }else{
+        this.zijiFlag = false
+      }
+      console.log(this.zijiFlag)
       this.columnOneOrTwo = columnOneOrTwos
       console.log(row)
       if(flag == 'edit'){
@@ -211,8 +252,8 @@ export default {
         this.dialogData.enable = String(row.enable)
         this.dialogData.orderNum = String(row.orderNum)
         if(columnOneOrTwos == 2){
-          this.dialogData.contentType = String(row.contentType)
-          this.dialogData.showType = String(row.showType)
+          this.dialogData.contentType = row.contentType
+          this.dialogData.showType = row.showType
           this.dialogData.parentId = row.parentId
         }else{
           this.dialogData.parentId = -1
@@ -274,27 +315,31 @@ export default {
       })
     },
     topicSaveOrUpdate(){
+      // console.log(this.dialogData)
       const data = {}
       for(let key in this.dialogData){
         if(this.dialogData[key] == ""){
-          delete this.dialogData[key]
+          // delete this.dialogData[key]
         }else{
           data[key] = String(this.dialogData[key])
         }
       }
+      // console.log(this.dialogData)
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          topicSaveOrUpdate(this.dialogData).then(res => {
+          topicSaveOrUpdate(data).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
               delete this.dialogData.id
               this.dialogData.topicName = ''
               this.dialogData.enable = ''
               this.dialogData.orderNum = ''
+              this.dialogData.contentType = ''
+              this.dialogData.showType = ''
               this.topicAllTree()
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: '操作成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -310,10 +355,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -404,6 +445,9 @@ export default {
   color: #606266;
   line-height: 40px;
   padding: 0 12px 0 30px;
+}
+.el-submenu .el-menu-item{
+  padding:0 20px 45px 0;
 }
 /* table 组件 */
 /* .el-table .warning-row {

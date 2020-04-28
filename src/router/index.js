@@ -35,6 +35,7 @@ export const constantRouterMap = [
       title: 'platformUserQuery',
       icon: 'peoples',
       name:'平台用户查询',
+      noCache: false,
     },
     children: [{
       path: 'userListQuery',
@@ -43,7 +44,8 @@ export const constantRouterMap = [
       meta: {
         title: 'userListQuery',
         name:'用户列表查询',
-        icon: 'peoples'
+        icon: 'peoples',
+        noCache: false,
       }
     },
 
@@ -78,6 +80,7 @@ export const constantRouterMap = [
       title: 'managersAdmin',
       icon: 'managersList',
       name:'管理员列表',
+      noCache: false,
     },
     children: [{
       path: 'managersList',
@@ -86,13 +89,49 @@ export const constantRouterMap = [
       meta: {
         title: 'managersList',
         name:'管理员列表',
-        icon: 'managersList'
+        icon: 'managersList',
+        noCache: false,
       }
     },
 
     ]
   },
-  
+  {
+    path: '/appLayoutManagement',
+    component: Layout,
+    redirect: '/appLayoutManagement/columnList',
+    name: 'appLayoutManagement',
+    meta: {
+      title: 'appLayoutManagement',
+      icon: 'applyNovelManagement',
+      name:'app版面配置',
+    },
+    children: [
+    
+      {
+        path: 'columnList',
+        component: () => import('@/views/appLayoutManagement/columnList'),
+        name: 'columnList',
+        meta: {
+          title: 'columnList',
+          name:'书城页面配置',
+          noCache: false,
+          icon: 'columnList'
+        }
+      },
+      {
+        path: 'classificationPageMan',
+        component: () => import('@/views/appLayoutManagement/classificationPageMan'),
+        name: 'classificationPageMan',
+        meta: {
+          title: 'classificationPageMan',
+          name:'分类页面配置',
+          noCache: false,
+          icon: 'columnList'
+        }
+      },
+    ]
+  },
   
   {
     path: '/novelManagement',
@@ -102,7 +141,8 @@ export const constantRouterMap = [
     meta: {
       title: 'novelManagement',
       icon: 'applyNovelManagement',
-      name:'小说管理',
+      name:'基础数据管理',
+      noCache: false,
     },
     children: [
       {
@@ -117,17 +157,6 @@ export const constantRouterMap = [
         }
       },
       {
-        path: 'columnList',
-        component: () => import('@/views/novelManagement/columnList'),
-        name: 'columnList',
-        meta: {
-          title: 'columnList',
-          name:'栏目管理',
-          noCache: false,
-          icon: 'columnList'
-        }
-      },
-      {
         path: 'novelManagementList',
         component: () => import('@/views/novelManagement/novelManagementList'),
         name: 'novelManagementList',
@@ -135,7 +164,7 @@ export const constantRouterMap = [
           title: 'novelManagementList',
           name:'小说列表',
           icon: 'applyNovelManagement',
-          noCache: true,
+          noCache: false,
         }
       },
       {
@@ -169,7 +198,8 @@ export const constantRouterMap = [
         meta: {
           title: 'tagList',
           name:'标签列表',
-          icon: 'managerTag'
+          icon: 'managerTag',
+          noCache: false,
         }
       },
       // {
@@ -182,17 +212,67 @@ export const constantRouterMap = [
       //     icon: 'bannerList'
       //   }
       // },
+      
+
+    ]
+  },
+  /* ======================================平台设置======================================== */
+  {
+    path: '/platformSettings',
+    component: Layout,
+    redirect: '/platformSettings/activityManagement',
+    name: 'platformSettings',
+    meta: {
+      title: 'platformSettings',
+      icon: 'setting'
+    },
+    children: [
+      {
+        path: 'goldRuleSettings',
+        component: () => import('@/views/platformSettings/goldRuleSettings'),
+        name: 'goldRuleSettings',
+        meta: {
+          title: 'goldRuleSettings',
+          icon: '',
+          title1: '金币规则设置',
+          noCache: false,
+        }
+      },
+      {
+        path: 'activityManagement',
+        component: () => import('@/views/platformSettings/activityManagement'),
+        name: 'activityManagement',
+        meta: {
+          title: 'activityManagement',
+          icon: '',
+          title1: '活动管理',
+          noCache: false,
+        }
+      },
       {
         path: 'applyNovelManagement',
-        component: () => import('@/views/novelManagement/applyNovelManagement'),
+        component: () => import('@/views/platformSettings/applyNovelManagement'),
         name: 'applyNovelManagement',
         meta: {
           title: 'applyNovelManagement',
           name:'申请上架小说管理',
+          noCache: false,
           // icon: 'applyNovelManagement'
         }
       },
-
+      {
+        path: 'feedbackManagement',
+        component: () => import('@/views/platformSettings/feedbackManagement'),
+        name: 'feedbackManagement',
+        meta: {
+          title: 'feedbackManagement',
+          icon: '',
+          noCache: false,
+          title1: '反馈帮助管理'
+        }
+      },
+      
+      
     ]
   },
   {
@@ -213,6 +293,7 @@ export const constantRouterMap = [
         meta: {
           title: 'rechareList',
           name:'充值套餐列表',
+          noCache: false,
           icon: 'managerRechare'
         }
       },
@@ -223,6 +304,7 @@ export const constantRouterMap = [
         meta: {
           title: 'vipComposeList',
           name:'VIP套餐列表',
+          noCache: false,
           icon: 'managerVipCompose'
         }
       },
@@ -238,6 +320,7 @@ export const constantRouterMap = [
       title: 'managerOrder',
       icon: 'managerOrder',
       name:'订单管理',
+      noCache: false,
     },
     children: [{
       path: 'orderList',
@@ -246,6 +329,7 @@ export const constantRouterMap = [
       meta: {
         title: 'orderList',
         name:'订单列表',
+        noCache: false,
         // icon: 'managerOrder'
       }
     },
@@ -256,6 +340,7 @@ export const constantRouterMap = [
       meta: {
         title: 'vipOrderList',
         name:'会员订单列表',
+        noCache: false,
         // icon: 'nested'
       }
     },
@@ -270,6 +355,7 @@ export const constantRouterMap = [
     meta: {
       title: 'appManagement',
       icon: 'appManagement',
+      noCache: false,
       name:'APP版本管理',
     },
     children: [{
@@ -279,6 +365,7 @@ export const constantRouterMap = [
       meta: {
         title: 'appManagement',
         name:'APP版本管理',
+        noCache: false,
         icon: 'appManagement'
       }
     },

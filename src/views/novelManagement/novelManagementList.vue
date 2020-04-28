@@ -5,6 +5,7 @@
         v-el-drag-dialog
         title="添加/编辑小说"
         :visible.sync="dialogTableVisible"
+        v-if="dialogTableVisible"
         width='70%'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
@@ -32,8 +33,8 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="字数:" prop="typeNum">
-              <el-input class="article-textarea" placeholder="请输入字数" maxlength="11" style="width:215px;"  v-model.trim="dialogData.typeNum"></el-input>
+            <el-form-item style="margin-bottom: 20px;margin-top:20px;" label-width="120px" label="字数:"  prop="typeNum">
+              <el-input class="article-textarea" placeholder="请输入字数" maxlength="9" style="width:215px;" @blur="handleInput(dialogData.typeNum)" @input.native="handleInput(dialogData.typeNum)"  v-model.trim="dialogData.typeNum"></el-input>
             </el-form-item>
             
           </el-col>
@@ -71,19 +72,19 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评分:" prop="score">
-              <el-input class="article-textarea" placeholder="请输入评分" maxlength="3" style="width:215px;"  v-model.trim="dialogData.score"></el-input>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评分:"  prop="score">
+              <el-input class="article-textarea" placeholder="请输入评分" maxlength="3" style="width:215px;" @blur="changeScore(dialogData.score)"  @input.native="changeScore(dialogData.score)"  v-model.trim="dialogData.score"></el-input>
             </el-form-item>
             
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="收藏数量:" prop="collectionNum">
-              <el-input class="article-textarea" placeholder="请输入收藏数量" maxlength="11" style="width:215px;"  v-model.trim="dialogData.collectionNum"></el-input>
+              <el-input class="article-textarea" placeholder="请输入收藏数量" maxlength="9" style="width:215px;" @blur="handleInputColloge(dialogData.collectionNum)" @input.native="handleInputColloge(dialogData.collectionNum)"  v-model.trim="dialogData.collectionNum"></el-input>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="评论数:" prop="commentNum">
-              <el-input class="article-textarea" placeholder="请输入评论数" maxlength="11" style="width:215px;"  v-model.trim="dialogData.commentNum"></el-input>
+              <el-input class="article-textarea" placeholder="请输入评论数" maxlength="9" style="width:215px;" @blur="handleInputCommentNum(dialogData.commentNum)" @input.native="handleInputCommentNum(dialogData.commentNum)" v-model.trim="dialogData.commentNum"></el-input>
             </el-form-item>
             
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" maxlength="11" label="总推荐(点击量):" prop="readNum">
-              <el-input class="article-textarea" placeholder="请输入总推荐(点击量)" style="width:215px;"  v-model.trim="dialogData.readNum"></el-input>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px"  label="总推荐(点击量):" prop="readNum">
+              <el-input class="article-textarea" placeholder="请输入总推荐(点击量)" maxlength="9" style="width:215px;" @blur="handleInputClickNum(dialogData.clickNum)"  @input.native="handleInputClickNum(dialogData.clickNum)"  v-model.trim="dialogData.clickNum"></el-input>
             </el-form-item>
             <!-- <el-form-item style="margin-bottom: 20px;" label-width="120px" label="创建日期:" prop="createTime">
               <el-date-picker
@@ -129,6 +130,12 @@
           <el-option label="是" value="1"> </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="是否是VIP可看:">
+        <el-select v-model="userListPage.vip" clearable placeholder="请选择">
+          <el-option label="否" value="0"> </el-option>
+          <el-option label="是" value="1"> </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -140,6 +147,7 @@
         />
       </el-form-item>
       <el-form-item style="margin-bottom:15px;float:right;">
+        <el-button type="success" @click="managerBookPage" >刷新当前列表</el-button>
         <el-button type="primary" @click="openEditOrAdd('add')" >添加小说</el-button>
       </el-form-item>
     </el-form>
@@ -159,8 +167,8 @@
             title=""
             width="300"
             trigger="hover">
-            <img :src="scope.row.coverImgUrlAll" style="width:100%;height:auto;">
-            <img :src="scope.row.coverImgUrlAll" slot="reference" style="width:auto;height:80px;">
+            <img :src="scope.row.coverImgUrlAll" @error="show_default_image" style="width:100%;height:auto;">
+            <img :src="scope.row.coverImgUrlAll" @error="show_default_image" slot="reference" style="width:auto;height:80px;">
           </el-popover>
           
         </template>
@@ -175,8 +183,13 @@
             title=""
             width="300"
             trigger="hover">
-            <div >{{scope.row.introduction}}</div>
-            <div slot="reference" style="width:90px;height:81px;line-height:27px;overflow: hidden;">{{scope.row.introduction}}</div>
+            <div >
+              <!-- {{scope.row.introduction}} -->
+              <p v-html="scope.row.introduction"></p>
+            </div>
+            <div slot="reference" style="width:90px;height:81px;line-height:27px;overflow: hidden;">
+              <!-- {{scope.row.introduction}} -->
+              <p v-html="scope.row.introduction"></p></div>
           </el-popover>
           
         </template>
@@ -184,7 +197,7 @@
       <el-table-column label="字数" prop='typeNum' align="center" :min-width="110"></el-table-column>
       <el-table-column label="收藏数量" prop='collectionNum' align="center" :min-width="110"></el-table-column>
       <el-table-column label="评论数" prop='commentNum' align="center" :min-width="110"></el-table-column>
-      <el-table-column label="总推荐(点击量)" prop='readNum' align="center" :min-width="110"></el-table-column>
+      <el-table-column label="总推荐(点击量)" prop='clickNum' align="center" :min-width="110"></el-table-column>
       <el-table-column label="评分" prop='score' align="center" :min-width="110"></el-table-column>
       <el-table-column label="标签" prop='tags' align="center" :min-width="110">
         <template slot-scope="scope">
@@ -194,7 +207,12 @@
           
         </template>
       </el-table-column>
-
+      <el-table-column label="是否是Vip可看" align="center" :min-width="120">
+        <template slot-scope="scope">
+          <span v-if="scope.row.vip == 0">否</span>
+          <span v-if="scope.row.vip == 1">是</span>
+        </template>
+      </el-table-column>
       <el-table-column label="是否完结" align="center" :min-width="110">
         <template slot-scope="scope">
           <span v-if="scope.row.complete == 0">否</span>
@@ -213,16 +231,18 @@
           {{scope.row.createTime}}
         </template>
       </el-table-column>
-      <el-table-column align="center" fixed="right" label="操作" width="280">
+      <el-table-column align="center" fixed="right" label="操作" width="360">
         <template slot-scope="scope">
           <!-- <el-button type="success" size="small" @click="openRecharge(scope.row)">充值</el-button> -->
-          <!-- <el-button type="primary" size="small">发行记录</el-button> -->
-          
+          <!-- <el-button type="primary" size="small">发行记录</el-button>managerBookVipSetting -->
+          <el-button type="danger" size="mini" @click="managerBookClearCoverImg(scope.row.id)" style="margin-right:5px;">删除封面</el-button>
           <router-link class="link-type" :to="'/novelManagement/novelChapterList/'+scope.row.id+'?bookName=' + scope.row.name">
             <el-button type="success" size="mini" >章节列表</el-button>
           </router-link>
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="openEditOrAdd('edit',scope.row)" style="margin-left:10px;">编辑</el-button>
-          <el-button type="danger" size="mini" @click="delConfirm(scope.row.id)">删除</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-edit" @click="openEditOrAdd('edit',scope.row)" style="margin-left:5px;">编辑</el-button>
+          <el-button type="danger" size="mini" @click="delConfirm(scope.row.id)"  style="margin-left:5px;">删除</el-button>
+          <el-button type="warning" size="mini" v-show="scope.row.vip==0" @click="managerBookVipSetting(scope.row.id,1)" style="margin-left:5px;margin-top:5px;">设置为VIP可看</el-button>
+          <el-button type="info" size="mini" v-show="scope.row.vip==1" @click="managerBookVipSetting(scope.row.id,0)"  style="margin-left:5px;margin-top:5px;">移除VIP可看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -230,7 +250,7 @@
         @current-change="pageChange"
         style="text-align:center;margin-top:3px"
         background
-        layout="prev, pager, next"
+        layout="prev, pager, next, jumper"
         :page-size="userListPage.pageSize"
         :current-page="userListPage.pageNum"
         :total="total"
@@ -239,15 +259,24 @@
 </template>
 
 <script>
-import { managerBookPage,managerBookSave,managerBookDelete,fileUpload,categoryList,tagList } from '@/api/category.js';
+import { managerBookPage,managerBookSave,managerBookDelete,fileUpload,categoryList,tagList,managerBookClearCoverImg,managerBookVipSetting } from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
+import { validatorColumnName,validatorOrderNum } from '@/utils/validator'
 export default {
   name: 'novelManagementList',
   directives: { elDragDialog },
   data() {
+    const validatorTagsData = (rule, value, callback) => {
+      console.log(value)
+      if (!value&&value.length <= 0) {
+        callback(new Error('请选择标签'))
+      } else {
+        callback()
+      }
+    }
     return {
       managerBookPageData: [],
       total: 1,
@@ -258,6 +287,7 @@ export default {
         complete:'',//是否完结:0否,1是
         free:'',//是否免费:0否,1是
         name:'',//书名
+        vip:'',//是否是Vip
       },
       registrationTime:[],
       dialogTableVisible:false,
@@ -272,22 +302,23 @@ export default {
         createTime:'',
         free:'',
         introduction:'',
-        readNum:'',
+        clickNum:'',
         score:'',
         tags:'',
         typeNum:'',
-        tagsData:[]         ,
+        tagsData:[],
+        vip:0,
       },
       
       dialogRules: {
-        name: [{ required: true, trigger: 'blur',message:'请输入书名' }],
+        name: [{ required: true, trigger: 'blur',validator: validatorColumnName}],
         introduction: [{ required: true, trigger: 'blur',message:'请输入简介'  }],
         author: [{ required: true, trigger: 'blur',message:'请输入作者'  }],
         categoryId: [{ required: true, trigger: 'blur',message:'请选择分类'  }],
         free: [{ required: true, trigger: 'blur',message:'请选择是否免费'  }],
         complete: [{ required: true, trigger: 'blur',message:'请选择是否完结'  }],
         tags: [{ required: true, trigger: 'blur',message:'请选择标签'  }],
-        tagsData:[{ required: true, trigger: 'blur',message:'请选择标签'  }],
+        tagsData:[{ required: true, trigger: 'blur',validator: validatorTagsData  }],
         coverImgUrl: [{ required: true, trigger: 'blur',message:'请上传封面'  }]
         
       },
@@ -302,7 +333,8 @@ export default {
         pageSize: 100,
       },
       tagListData:[],
-      
+      // defaultImg:"../../assets/images/default_img_bg.png",
+      defaultImg:'http://47.112.147.92:8080/novelImg/79ed79ef4fd.png'
     }
   },
   computed: {
@@ -316,6 +348,77 @@ export default {
     this.tagList()
   },
   methods: {
+    managerBookVipSetting(ids,vips){
+      const data = {
+        id:ids,
+        vip:vips
+      }
+      managerBookVipSetting(data).then(res => {
+        if(res.code == 200){  
+          this.managerBookPage()    
+          this.$message({
+            type: 'success',
+            message: '设置成功!'
+          });
+        }else{
+          this.$message.error(res.msg);
+        }
+        
+      })
+    },
+    managerBookClearCoverImg(ids) {
+      const data = {
+        id:ids
+      }
+      managerBookClearCoverImg(data).then(res => {
+        if(res.code == 200){      
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }else{
+          this.$message.error(res.msg);
+        }
+        
+      })
+    },
+    handleInputClickNum(e){
+      this.dialogData.clickNum = e.replace(/[^\d]/g,'');
+    },
+    handleInputCommentNum(e){
+      this.dialogData.commentNum = e.replace(/[^\d]/g,'');
+    },
+    handleInputColloge(e) {
+      this.dialogData.collectionNum = e.replace(/[^\d]/g,'');
+    },
+    handleInput(e) {
+      this.dialogData.typeNum = e.replace(/[^\d]/g,'');
+    },
+    changeScore(val) {
+        val = val.replace(/(^\s*)|(\s*$)/g, "")
+        if(!val) {
+            this.a = "";
+            return
+        }
+        var reg = /[^\d.]/g
+
+        // 只能是数字和小数点，不能是其他输入
+        val = val.replace(reg, "")
+
+        // 保证第一位只能是数字，不能是点
+        val = val.replace(/^\./g, "");
+        // 小数只能出现1位
+        val = val.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        // 小数点后面保留2位
+        val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        if(val>10){
+          val = 10
+        }
+        this.dialogData.score = val;
+    },
+    show_default_image: function(event) {
+      event.target.src = require("../../assets/images/default_img_bg.png")
+    },
     selectChange(val){
       this.$forceUpdate();
     },
@@ -457,7 +560,7 @@ export default {
               this.managerBookPage()
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: '操作成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -473,10 +576,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
       }).catch(() => {
         this.$message({
           type: 'info',

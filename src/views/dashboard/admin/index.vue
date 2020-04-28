@@ -80,7 +80,7 @@
           </el-col> -->
           <el-col :xs="24" :sm="24" :lg="24">
             <div class="chart-wrapper">
-              <PieChartTwo></PieChartTwo>
+              <PieChartTwo height="350px"></PieChartTwo>
             </div>
           </el-col>
         </el-row>

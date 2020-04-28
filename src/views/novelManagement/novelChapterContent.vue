@@ -20,14 +20,14 @@
       </sticky>
       <div class="app-container">
         <div class="createPost-main-container">
-          <el-row>
-            <el-col :span="24">
-              <el-form-item style="margin-bottom: 40px;" prop="chapter">
-                <MDinput name="chapter" v-model="postForm.chapter" required :maxlength="200">
+          <el-row :gutter="20">
+            <el-col :span="16" >
+              <el-form-item label-width="90px" style="margin-bottom: 40px;" label="章节名:" prop="chapter">
+                <!-- <MDinput name="chapter" v-model="postForm.chapter" required :maxlength="20">
                   章节名
-                </MDinput>
+                </MDinput> -->
+                <el-input placeholder="请输入章节名" v-model="postForm.chapter" maxlength="20" :style="{ width: '100%' }" clearable />
               </el-form-item>
-
               <div class="postInfo-container">
                 <el-row>
                   <el-col :span="10">
@@ -57,21 +57,32 @@
                   </el-col> -->
                 </el-row>
               </div>
+              <div class="postInfo-container">
+                <el-form-item style="margin-bottom: 40px;" label-width="90px" prop="content" label="章节内容:">
+                  <!-- <el-input type="textarea" class="article-textarea" :rows="1" autosize placeholder="请输入内容" v-model="managerBookContentData.content">
+                  </el-input> -->
+                  <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 10,maxRows:30}"
+                    placeholder="请输入内容"
+                    v-model="postForm.content">
+                  </el-input>
+                  <!-- <div v-html="managerBookContentData.content"></div> -->
+                  <!-- <span class="word-counter" v-show="contentShortLength">{{contentShortLength}}字</span> -->
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="reader-con">
+                <div  class="reader-con-box">
+                  <h3 class="reader-con-title">{{postForm.chapter}}</h3>
+                  <p class="reader-con-p" v-html="postForm.content"></p>
+                </div>
+              </div>
             </el-col>
           </el-row>
 
-          <el-form-item style="margin-bottom: 40px;" label-width="90px" prop="content" label="章节内容:">
-            <!-- <el-input type="textarea" class="article-textarea" :rows="1" autosize placeholder="请输入内容" v-model="managerBookContentData.content">
-            </el-input> -->
-            <el-input
-              type="textarea"
-              :autosize="{ minRows: 10}"
-              placeholder="请输入内容"
-              v-model="postForm.content">
-            </el-input>
-            <!-- <div v-html="managerBookContentData.content"></div> -->
-            <!-- <span class="word-counter" v-show="contentShortLength">{{contentShortLength}}字</span> -->
-          </el-form-item>
+          
 
         </div>
       </div>
@@ -94,6 +105,8 @@ import MDinput from '@/components/MDinput'
 import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，element-ui的select不能满足所有需求
 import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
 // import VoiceAnnouncements from './voiceAnnouncements'
+
+import { validatorColumnName,validatorOrderNum } from '@/utils/validator'
 export default {
   name: 'novelChapterContent',
   directives: { elDragDialog },
@@ -114,8 +127,8 @@ export default {
         typeNum:'',
       },
       rules: {
-        chapter: [{ required: true, trigger: 'blur',message:'请输入章节名' }],
-        orderNum: [{ required: true, trigger: 'blur',message:'请输入排序序号' }],
+        chapter: [{ required: true, trigger: 'blur',message:'请输入章节名称'  }],
+        orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum  }],
         content: [{ required: true, trigger: 'blur',message:'请输入内容' }],
       },
     }
@@ -166,7 +179,7 @@ export default {
               }
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: '操作成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -229,5 +242,25 @@ export default {
   textarea{
     line-height: 2 !important;
   }
+ .reader-con {
+    position: relative;
+    background: #ecf8f2;
+    height: 100%;
+    transition: padding-top 0.2s;
+    max-height:990px;
+    overflow: hidden;
+    overflow-y:auto;
+    
+  }
+  .reader-con .reader-con-box {
+      padding: 20px 15px 30px 15px;
+      font-size: 20px;
+      line-height: 2;
+      color: #333333;
+      
+    }
+    .reader-con .reader-con-box .reader-con-title {
+        text-align: center;
+      }
 </style>
 

@@ -169,6 +169,24 @@ export function managerBookDelete(data) { //删除小说
   })
 }
 
+//  清除书本封面
+export function managerBookClearCoverImg(data) { //清除书本封面
+  return request({
+      url: '/manager/book/clear/coverImg',
+      method: 'get',
+      params: data
+  })
+}
+
+//  设置VIP
+export function managerBookVipSetting(data) { //设置VIP
+  return request({
+      url: '/manager/book/vip/setting',
+      method: 'get',
+      params: data
+  })
+}
+
 //  获取小说全部章节列表
 export function bookContentList(data) { 
   return request({
@@ -327,16 +345,152 @@ export function topicBookDeleteAll(data) { //删除全部书本
 
 
 
+//  分类启用,禁用
+export function dictClassifyEnable(data) { 
+  return request({
+      url: '/dict/classify/enable',
+      method: 'get',
+      params: data
+  })
+}
+
+//  小说大分类值列表
+export function dictClassifyList(data) { 
+  return request({
+      url: '/dict/classify/list',
+      method: 'get',
+      params: data
+  })
+}
+
+//  保存和更新子字典
+export function dictClassifySaveOrUpdate(data) { 
+  return request({
+      url: '/dict/classify/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
+
+//  分类删除
+export function dictDelete(data) { 
+  return request({
+      url: '/dict/delete',
+      method: 'get',
+      params: data
+  })
+}
 
 
+//  子分类分页查询
+export function classificationCategoryPage(data) { 
+  return request({
+      url: '/classification/category/page',
+      method: 'post',
+      data
+  })
+}
+//  批量添加大分类的子分类
+export function classificationCategoryBatchSave(data) { 
+  return request({
+      url: '/classification/category/batch/save',
+      method: 'post',
+      data
+  })
+}
+
+//  获取配置信息
+export function coinConfigureGet(data) { 
+  return request({
+      url: '/coin/configure/get',
+      method: 'get',
+      params: data
+  })
+}
+//  修改配置信息
+export function coinConfigureUpdate(data) { 
+  return request({
+      url: '/coin/configure/update',
+      method: 'post',
+      data,
+      encryptedOrNot:true,
+  })
+}
+
+//  获取图片根路径
+export function getHostPath(data) { 
+  return request({
+      url: '/getHostPath',
+      method: 'get',
+      params: data
+  })
+}
 
 
+//  处理反馈
+export function feedbackAudit(data) { 
+  return request({
+      url: '/feedback/audit',
+      method: 'get',
+      params: data
+  })
+}
+//  删除反馈
+export function feedbackDelete(data) { 
+  return request({
+      url: '/feedback/delete',
+      method: 'get',
+      params: data
+  })
+}
+//  反馈分页
+export function feedbackPage(data) { 
+  return request({
+      url: '/feedback/page',
+      method: 'post',
+      data
+  })
+}
+//  添加反馈
+export function feedbackAdd(data) { 
+  return request({
+      url: '/feedback/add',
+      method: 'post',
+      data
+  })
+}
 
 
-
-
-
-
-
-
+//  修改活动状态
+export function activityChangestate(data) { 
+  return request({
+      url: '/activity/changestate',
+      method: 'get',
+      params: data
+  })
+}
+//  删除活动
+export function activityDelete(data) { 
+  return request({
+      url: '/activity/delete',
+      method: 'get',
+      params: data
+  })
+}
+// 活动分页
+export function activityPage(data) { 
+  return request({
+      url: '/activity/page',
+      method: 'post',
+      data
+  })
+}
+// 添加或修改活动
+export function activitySaveOrUpdate(data) { 
+  return request({
+      url: '/activity/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
 

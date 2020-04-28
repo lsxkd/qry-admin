@@ -3,21 +3,25 @@
   <div class="app-container">
     <el-dialog
         v-el-drag-dialog
-        title="添加管理员"
+        :title="dialogTitle"
         :visible.sync="dialogTableVisible"
+        v-if="dialogTableVisible"
         width='500px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="用户名:" prop="username">
-          <el-input class="article-textarea" placeholder="请输入用户名" style="width:215px;" v-model.trim="dialogData.username"></el-input>
+          <el-input class="article-textarea" placeholder="请输入用户名" style="width:215px;" maxlength="16" v-model.trim="dialogData.username"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="密码:" prop="password" v-if="dialogFlag == 'add'">
-          <el-input class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
+          <el-input type="password" class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="密码:"  v-if="dialogFlag == 'edit'">
-          <el-input class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
+          <el-input type="password" class="article-textarea" placeholder="请输入密码" style="width:215px;" maxlength="16"   v-model.trim="dialogData.password"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="手机号:">
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="手机号:" prop="mobile" v-if="dialogData.mobile">
+          <el-input class="article-textarea" placeholder="请输入手机号" style="width:215px;" maxlength="11" v-model.trim="dialogData.mobile"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="手机号:" v-if="!dialogData.mobile">
           <el-input class="article-textarea" placeholder="请输入手机号" style="width:215px;" maxlength="11" v-model.trim="dialogData.mobile"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="账户状态:" prop="status" >
@@ -26,11 +30,14 @@
             <el-option label="停用" value="1"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="邮箱:">
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="邮箱:" prop="email" v-if="dialogData.email">
+          <el-input class="article-textarea" placeholder="请输入邮箱" style="width:215px;"  v-model.trim="dialogData.email"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" label-width="100px" label="邮箱:"  v-if="!dialogData.email">
           <el-input class="article-textarea" placeholder="请输入邮箱" style="width:215px;"  v-model.trim="dialogData.email"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="100px" label="真实姓名:">
-          <el-input class="article-textarea" placeholder="请输入真实姓名" style="width:215px;"  v-model.trim="dialogData.realname"></el-input>
+          <el-input class="article-textarea" placeholder="请输入真实姓名" style="width:215px;" maxlength="7"  v-model.trim="dialogData.realname"></el-input>
         </el-form-item>
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
@@ -48,7 +55,7 @@
       <el-form-item label="真实姓名:">
         <el-input placeholder="真实姓名" v-model.trim="userListPage.realName" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
       </el-form-item>
-      <el-form-item label="注册时间">
+      <el-form-item label="创建时间">
         <el-date-picker
           v-model="registrationTime"
           type="daterange"
@@ -88,15 +95,15 @@
       </el-table-column>
       <el-table-column label="用户名" prop='username' :min-width="150"></el-table-column>
       <el-table-column label="邮箱" prop='email' :min-width="150"></el-table-column>
-      <el-table-column label="身份证号" prop='idCard' :min-width="150"></el-table-column>
+      <!-- <el-table-column label="身份证号" prop='idCard' :min-width="150"></el-table-column> -->
       <el-table-column label="手机号" prop='mobile' :min-width="150"></el-table-column>
-      <el-table-column label="姓名" prop='realName' :min-width="150"></el-table-column>
-      <el-table-column label="qq" prop='qq' :min-width="150"></el-table-column>
-      <el-table-column label="微信" prop='wechat' :min-width="150"></el-table-column>
+      <el-table-column label="真实姓名" prop='realname' :min-width="150"></el-table-column>
+      <!-- <el-table-column label="qq" prop='qq' :min-width="150"></el-table-column>
+      <el-table-column label="微信" prop='wechat' :min-width="150"></el-table-column> -->
       <el-table-column label="账户状态" :min-width="150">
         <template slot-scope="scope">
-          <span v-if="scope.row.status == 0">正常</span>
-          <span v-if="scope.row.status == 1">禁用</span>
+          <span v-if="scope.row.status == 0">启用</span>
+          <span v-if="scope.row.status == 1">停用</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="余额" prop='coinNum' :min-width="150"></el-table-column> -->
@@ -125,6 +132,9 @@
 import { managersList,addManagers,delManagers } from '@/api/user.js';
 import moment from 'moment';
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
+
+import { validatorUserName,validatorPassword,validatorPasswordEdit ,validatorPhone,validatorEmail} from '@/utils/validator'
+
 export default {
   name: 'managersList',
   directives: { elDragDialog },
@@ -150,12 +160,17 @@ export default {
         mobile:'',
         realname:'',
         email:'',
+        // passwordEdit:'',
       },
       dialogRules: {
-        username: [{ required: true, trigger: 'blur',message:'请输入用户名' }],
-        password: [{ required: true, trigger: 'blur',message:'请输入密码'  }]
+        username: [{ required: true, trigger: 'blur',validator: validatorUserName }],
+        password: [{ required: true, trigger: 'blur',validator: validatorPassword  }],
+        passwordEdit: [{ required: true, trigger: 'blur',validator: validatorPasswordEdit  }],
+        mobile: [{ required: false, trigger: 'blur',validator: validatorPhone  }],
+        email: [{ required: false, trigger: 'blur',validator: validatorEmail  }],
       },
       dialogFlag:'',
+      dialogTitle:'添加'
     }
   },
   created() {
@@ -180,13 +195,24 @@ export default {
       this.dialogTableVisible = true
       this.dialogFlag = flag
       if(flag == 'edit'){
+        this.dialogTitle = '编辑'
         this.dialogData.id = row.id
         this.dialogData.username = row.username
         this.dialogData.password = row.password
+        // this.dialogData.passwordEdit = row.password
         this.dialogData.mobile = row.mobile
         this.dialogData.realname = row.realname
         this.dialogData.email = row.email
         this.dialogData.status = String(row.status)
+      }else{
+        this.dialogTitle = '添加'
+        delete this.dialogData.id
+        this.dialogData.username = ''
+        this.dialogData.password = ''
+        this.dialogData.mobile = ''
+        this.dialogData.realname = ''
+        this.dialogData.email = ''
+        this.dialogData.status = ''
       }
     },
     pageChange (p) {
@@ -210,6 +236,13 @@ export default {
       })
     },
     addManagerBtn(){
+      // if(this.dialogFlag == 'edit'){
+      //   this.dialogData.password = this.dialogData.passwordEdit
+      //   // delete this.dialogData.passwordEdit
+      // }else{
+      //   // delete this.dialogData.passwordEdit
+      // }
+      console.log(this.dialogData)
       const data = {}
       for(let key in this.dialogData){
         if(this.dialogData[key] == '' || this.dialogData[key] == null){
@@ -217,6 +250,15 @@ export default {
         }else{
           data[key] = this.dialogData[key]
         }
+      }
+      console.log(data)
+      // console.log(data.password.length)
+      if(data.password && data.password.length<6){
+        this.$message({
+          type: 'info',
+          message: '密码长度必须大于或等于6位'
+        });
+        return
       }
       this.$refs.dialogData.validate(valid => {
         if (valid) {
@@ -234,7 +276,7 @@ export default {
               this.getUserList()
               this.$message({
                   type: 'success',
-                  message: '添加成功!'
+                  message: this.dialogTitle + '成功!'
               });
             }else{
               this.$message.error(res.msg);
@@ -250,10 +292,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
       }).catch(() => {
         this.$message({
           type: 'info',
