@@ -69,14 +69,16 @@
                   </el-input>
                   <!-- <div v-html="managerBookContentData.content"></div> -->
                   <!-- <span class="word-counter" v-show="contentShortLength">{{contentShortLength}}字</span> -->
+                  <p class="tips" style="color:#999;">注：标签 <input style="background:none;border:0;width:80px;color:#999;" v-model="spStr" disabled />代表首行缩进两个字符！</p>
                 </el-form-item>
+                
               </div>
             </el-col>
             <el-col :span="8">
               <div class="reader-con">
                 <div  class="reader-con-box">
                   <h3 class="reader-con-title">{{postForm.chapter}}</h3>
-                  <p class="reader-con-p" v-html="postForm.content"></p>
+                  <p class="reader-con-p" v-html="strReplace(postForm.content)"></p>
                 </div>
               </div>
             </el-col>
@@ -131,6 +133,7 @@ export default {
         orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum  }],
         content: [{ required: true, trigger: 'blur',message:'请输入内容' }],
       },
+      spStr:'<sp></sp>',
     }
   },
   computed: {},
@@ -158,6 +161,7 @@ export default {
         this.postForm.chapter = this.managerBookContentData.chapter
         this.postForm.bookId = this.managerBookContentData.bookId
         this.postForm.content = this.managerBookContentData.content
+        // this.postForm.content = this.managerBookContentData.content.replace(/<sp><\/sp>/ig, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
         this.postForm.orderNum = this.managerBookContentData.orderNum
         this.postForm.typeNum = this.managerBookContentData.typeNum
         
@@ -188,11 +192,15 @@ export default {
         }
       })
     },
+    strReplace(v){
+      return v.replace(/<sp><\/sp>/ig, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+    },
   },
   filters: {
     initTime(v) {
       return moment(v).format('YYYY-MM-DD HH:hh:ss');
-    }
+    },
+    
   }
 }
 </script>

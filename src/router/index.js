@@ -220,13 +220,24 @@ export const constantRouterMap = [
   {
     path: '/platformSettings',
     component: Layout,
-    redirect: '/platformSettings/activityManagement',
+    redirect: '/platformSettings/messageCenter',
     name: 'platformSettings',
     meta: {
       title: 'platformSettings',
       icon: 'setting'
     },
     children: [
+      {
+        path: 'messageCenter',
+        component: () => import('@/views/platformSettings/messageCenter'),
+        name: 'messageCenter',
+        meta: {
+          title: 'messageCenter',
+          icon: '',
+          title1: '公告管理',
+          noCache: false,
+        }
+      },
       {
         path: 'goldRuleSettings',
         component: () => import('@/views/platformSettings/goldRuleSettings'),
@@ -269,6 +280,17 @@ export const constantRouterMap = [
           icon: '',
           noCache: false,
           title1: '反馈帮助管理'
+        }
+      },
+      {
+        path: 'feedbackBook',
+        component: () => import('@/views/platformSettings/feedbackBook'),
+        name: 'feedbackBook',
+        meta: {
+          title: 'feedbackBook',
+          icon: '',
+          noCache: false,
+          title1: '书籍纠错反馈管理'
         }
       },
       

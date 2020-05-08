@@ -307,7 +307,7 @@ export default {
         tags:'',
         typeNum:'',
         tagsData:[],
-        vip:0,
+        vip:"0",
       },
       
       dialogRules: {
@@ -520,6 +520,7 @@ export default {
         }
         this.dialogData.tagsData = []
         this.imgUploadSrc = ''
+        this.dialogData.vip = 0
       }
       
       this.dialogTableVisible = true

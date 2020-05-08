@@ -17,7 +17,7 @@
         
         <div style="text-align:center;margin-top:40px;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="success" @click="feedbackAudit">确定</el-button>
+          <el-button type="success" @click="feedbackBookAudit">确定</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -64,7 +64,10 @@
         </template>
       </el-table-column>
       <el-table-column label="联系方式" prop='contact' :min-width="150"></el-table-column>
-      
+      <!-- <el-table-column label="书本ID" prop='bookId' :min-width="150"></el-table-column> -->
+      <el-table-column label="书本名称" prop='bookName' :min-width="150"></el-table-column>
+      <!-- <el-table-column label="章节ID" prop='chapterId' :min-width="150"></el-table-column> -->
+      <el-table-column label="章节名称" prop='chapterName' :min-width="150"></el-table-column>
       <el-table-column label="问题类型" prop='problemType' :min-width="150"></el-table-column>
       <el-table-column label="问题内容" prop='problemContent' :min-width="150"></el-table-column>
       
@@ -97,13 +100,18 @@
 </template>
 
 <script>
-import { feedbackPage,feedbackAudit,feedbackDelete } from '@/api/category.js';
+// 1.章节顺序不正确
+// 2.章节缺失
+// 3.章节内容有误
+// 4.章节内容缺失
+// 5.其他问题
+import { feedbackBookPage,feedbackBookAudit,feedbackBookDelete } from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 import { getToken } from '@/utils/auth'
 export default {
-  name: 'feedbackManagement',
+  name: 'feedbackBook',
   directives: { elDragDialog },
   data() {
     return {
@@ -131,7 +139,7 @@ export default {
     }
   },
   created() {
-    this.feedbackPage();
+    this.feedbackBookPage();
   },
   methods: {
     openEditOrAdd(id){
@@ -139,13 +147,13 @@ export default {
       this.dialogData.id = id
       this.dialogData.state = ''
     },
-    feedbackAudit(){
+    feedbackBookAudit(){
       this.$refs.dialogData.validate(valid => {
         if (valid) {
-          feedbackAudit(this.dialogData).then(res => {
+          feedbackBookAudit(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-                  this.feedbackPage()
+                  this.feedbackBookPage()
                   this.$message({
                       type: 'success',
                       message: '处理成功!'
@@ -159,15 +167,15 @@ export default {
     },
     searchBtn(){
       this.userListPage.pageNum = 1
-      this.feedbackPage()
+      this.feedbackBookPage()
     },
     pageChange (p) {
       this.userListPage.pageNum = p
-      this.feedbackPage()
+      this.feedbackBookPage()
     },
-    feedbackPage() {
+    feedbackBookPage() {
 
-      feedbackPage(this.userListPage).then(res => {
+      feedbackBookPage(this.userListPage).then(res => {
         // console.log(res.data)
         this.userList = res.data.list
         this.total = res.data.total
@@ -181,7 +189,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.delManagers(id)
-        
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -193,9 +200,9 @@ export default {
       const data = {
         id:id
       }
-      feedbackDelete(data).then(res => {
+      feedbackBookDelete(data).then(res => {
         if(res.code == 200){
-              this.feedbackPage()
+              this.feedbackBookPage()
               this.$message({
                   type: 'success',
                   message: '删除成功!'

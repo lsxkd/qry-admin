@@ -461,6 +461,44 @@ export function feedbackAdd(data) {
 }
 
 
+
+//  处理反馈
+export function feedbackBookAudit(data) { 
+  return request({
+      url: '/feedback/book/audit',
+      method: 'get',
+      params: data
+  })
+}
+//  删除反馈
+export function feedbackBookDelete(data) { 
+  return request({
+      url: '/feedback/book/delete',
+      method: 'get',
+      params: data
+  })
+}
+//  反馈分页
+export function feedbackBookPage(data) { 
+  return request({
+      url: '/feedback/book/page',
+      method: 'post',
+      data
+  })
+}
+//  添加反馈
+export function feedbackBookAdd(data) { 
+  return request({
+      url: '/feedback/book/add',
+      method: 'post',
+      data
+  })
+}
+
+
+
+
+
 //  修改活动状态
 export function activityChangestate(data) { 
   return request({
@@ -493,4 +531,46 @@ export function activitySaveOrUpdate(data) {
       data
   })
 }
+
+// 公告分页
+export function noticePage(data) { 
+  return request({
+      url: '/notice/page',
+      method: 'post',
+      data
+  })
+}
+// 添加或修改公告
+export function noticeSaveOrUpdate(data) { 
+  return request({
+      url: '/notice/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
+//  修改公告状态
+export function noticeUpdateState(data) { 
+  return request({
+      url: '/notice/update/state',
+      method: 'get',
+      params: data
+  })
+}
+//  删除公告
+export function noticeDelete(data) { 
+  return request({
+      url: '/notice/delete',
+      method: 'get',
+      params: data
+  })
+}
+
+
+
+
+
+
+
+
+
 

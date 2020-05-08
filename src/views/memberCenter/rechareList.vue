@@ -9,7 +9,7 @@
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="名称:" prop="coinComposeName">
-          <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" v-model.trim="dialogData.coinComposeName"></el-input>
+          <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" maxlength="20" v-model.trim="dialogData.coinComposeName"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="金额:" prop="amount">
           <el-input class="article-textarea"  placeholder="请输入金额" style="width:215px;" maxlength="9" @blur="changeMoney(dialogData.amount)" @input.native="changeMoney(dialogData.amount)"  v-model.trim="dialogData.amount"></el-input>

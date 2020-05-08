@@ -21,7 +21,7 @@
           </el-select>
       </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="优惠价:" prop="disAmount" v-if="dialogData.discount == 1">
-          <el-input class="article-textarea" placeholder="请输入优惠价" style="width:215px;" maxlength="9"  v-model.trim="dialogData.disAmount"></el-input>
+          <el-input class="article-textarea" placeholder="请输入优惠价" style="width:215px;" maxlength="9" @blur="changeMonthNumTwo(dialogData.disAmount)" @input.native="changeMonthNumTwo(dialogData.disAmount)"  v-model.trim="dialogData.disAmount"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="160px" label="有效期时长(单位月):" prop="monthNum">
           <el-input class="article-textarea"  placeholder="请输入有效期时长" style="width:215px;" maxlength="4" @blur="handleInput(dialogData.monthNum)" @input.native="handleInput(dialogData.monthNum)"  v-model.trim="dialogData.monthNum"></el-input>
@@ -156,13 +156,32 @@ export default {
     handleInput(e) {
       this.dialogData.monthNum = e.replace(/[^\d]/g,'');
     },
+    changeMonthNumTwo(val) {
+        val = val.replace(/(^\s*)|(\s*$)/g, "")
+        if(!val) {
+            this.a = "";
+            return
+        }
+        let reg = /[^\d.]/g
+
+        // 只能是数字和小数点，不能是其他输入
+        val = val.replace(reg, "")
+
+        // 保证第一位只能是数字，不能是点
+        val = val.replace(/^\./g, "");
+        // 小数只能出现1位
+        val = val.replace(".", "$#$").replace(/\./g, "0").replace("$#$", ".");
+        // 小数点后面保留2位
+        val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        this.dialogData.disAmount = val;
+    },
     changeMonthNum(val) {
         val = val.replace(/(^\s*)|(\s*$)/g, "")
         if(!val) {
             this.a = "";
             return
         }
-        var reg = /[^\d.]/g
+        let reg = /[^\d.]/g
 
         // 只能是数字和小数点，不能是其他输入
         val = val.replace(reg, "")
@@ -217,6 +236,9 @@ export default {
       })
     },
     addManagerBtn(){
+      if(this.dialogData.discount != 1){
+        delete this.dialogData.disAmount
+      }
       this.$refs.dialogData.validate(valid => {
         if (valid) {
           addVipCompose(this.dialogData).then(res => {

@@ -29,8 +29,10 @@ export default {
     novelChapterContent:'小说章节内容编辑',
 
     platformSettings:"平台设置",
+    messageCenter:'公告管理',
     goldRuleSettings:'金币规则设置',
     feedbackManagement:'反馈帮助管理',
+    feedbackBook:'书籍纠错反馈管理',
     applyNovelManagement:'申请上架小说管理',
     activityManagement:'活动管理',
 
