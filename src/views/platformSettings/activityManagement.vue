@@ -5,57 +5,101 @@
         v-el-drag-dialog
         :title="dialogTitle"
         :visible.sync="dialogTableVisible"
-        width='600px'
+        width='900px'
       >
-      <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="名称:" prop="activityName">
-          <el-input class="article-textarea" placeholder="请输入活动名称" style="width:215px;" maxlength="50" v-model.trim="dialogData.activityName"></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动开始时间:" prop="activityStartTime">
-          <el-date-picker
-            v-model="dialogData.activityStartTime"
-            type="datetime"
-            style="width:215px;"
-            :picker-options="pickerOptionsOne"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            default-time="00:00:00"
-            placeholder="选择活动开始时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动结束时间:" prop="activityEndTime">
-          <el-date-picker
-            v-model="dialogData.activityEndTime"
-            :picker-options="pickerOptionsTwo"
-            type="datetime"
-            style="width:215px;"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            default-time="23:59:59"
-            placeholder="选择活动结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="跳转URL:" prop="jumpUrl">
-          <el-input class="article-textarea" placeholder="请输入跳转URL" style="width:215px;"  v-model.trim="dialogData.jumpUrl"></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="是否启用:" prop="state">
-          <el-radio v-model="dialogData.state" :label="1" border>启用</el-radio>
-          <el-radio v-model="dialogData.state" :label="0" border>关闭</el-radio>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:" prop="orderNum">
-          <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.number.trim="dialogData.orderNum"></el-input>
-        </el-form-item>
-        <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="120px" label="图片:">
-          <el-upload
-          style="width:215px;"
-            class="avatar-uploader"
-            :action="FileUpload"
-            :show-file-list="false"
-            :headers="{'Authorization':tokenData}"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar" style="width:auto;height:auto;max-width:215px;max-height:215px;margin:0 auto;">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
+      <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData" size="small">
+        <el-row>
+          <el-col :sm="24" :md="12">
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动名称:" prop="activityName">
+              <el-input class="article-textarea" placeholder="请输入活动名称" style="width:215px;" maxlength="50" v-model.trim="dialogData.activityName"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动开始时间:" prop="activityStartTime">
+              <el-date-picker
+                v-model="dialogData.activityStartTime"
+                type="datetime"
+                style="width:215px;"
+                :picker-options="pickerOptionsOne"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00"
+                placeholder="选择活动开始时间">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动结束时间:" prop="activityEndTime">
+              <el-date-picker
+                v-model="dialogData.activityEndTime"
+                :picker-options="pickerOptionsTwo"
+                type="datetime"
+                style="width:215px;"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="23:59:59"
+                placeholder="选择活动结束时间">
+              </el-date-picker>
+            </el-form-item>
+            
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="是否启用:" prop="state">
+              <el-radio v-model="dialogData.state" :label="1" border size="mini">启用</el-radio>
+              <el-radio v-model="dialogData.state" :label="0" border size="mini">关闭</el-radio>
+            </el-form-item>            
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:" prop="orderNum">
+              <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.number.trim="dialogData.orderNum"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="权重(1-100):" prop="ruleWeight">
+              <el-input class="article-textarea" placeholder="请输入权重" style="width:215px;" maxlength="50" v-model.trim="dialogData.ruleWeight"></el-input>
+            </el-form-item>            
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="目标标签:" prop="targetTags">
+              <el-input class="article-textarea" placeholder="请输入目标标签" style="width:215px;" maxlength="50" v-model.trim="dialogData.targetTags"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="展示位置(多选):" prop="showPosition" >
+              <el-checkbox-group v-model="showPositionArr" style="width:320px;">
+                <el-checkbox :label="1" border>banner</el-checkbox>
+                <el-checkbox :label="2" border>书籍内部</el-checkbox>
+                <el-checkbox :label="3" border>消息推送</el-checkbox>
+              </el-checkbox-group>
+              <!-- <el-radio v-model="dialogData.showPosition" :label="1" border size="mini">banner</el-radio>
+              <el-radio v-model="dialogData.showPosition" :label="2" border size="mini">书籍内部</el-radio>
+              <el-radio v-model="dialogData.showPosition" :label="3" border size="mini">消息推送</el-radio> -->
+            </el-form-item>
+            
+          </el-col>
+          <el-col :sm="24" :md="12">
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="活动标题:" prop="activityDetail">
+              <el-input class="article-textarea" placeholder="请输入活动标题" style="width:236px;" maxlength="50" v-model.trim="dialogData.activityDetail"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="跳转类型:" prop="jumpType">
+              <el-radio v-model="dialogData.jumpType" :label="0" border >APP内打开</el-radio>
+              <el-radio v-model="dialogData.jumpType" :label="1" border >浏览器打开</el-radio>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="跳转URL:" prop="jumpUrl">
+              <el-input class="article-textarea" placeholder="请输入跳转URL" style="width:236px;"  v-model.trim="dialogData.jumpUrl"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体类型:" prop="mediaType">
+              <el-radio v-model="dialogData.mediaType" :label="0" border >图片</el-radio>
+              <el-radio v-model="dialogData.mediaType" :label="1" border >视频</el-radio>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体来源:" prop="mediaSources">
+              <el-radio v-model="mediaSources" :label="0" border >本地上传</el-radio>
+              <el-radio v-model="mediaSources" :label="1" border >从URL插入</el-radio>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体URL:" prop="mediaUrl" v-if="mediaSources == 1">
+              <el-input class="article-textarea" placeholder="请输入媒体URL" style="width:236px;"  v-model.trim="dialogData.mediaUrl"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="120px" label="banner图片:">
+              <el-upload
+              style="width:215px;"
+                class="avatar-uploader"
+                :action="FileUpload"
+                :show-file-list="false"
+                :headers="{'Authorization':tokenData}"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar" style="width:auto;height:auto;max-width:215px;max-height:215px;margin:0 auto;">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+            
+
+          </el-col>
+        </el-row>
         <div style="text-align:center;">
           <el-button type="cancle"  @click="dialogTableVisible = false">取消</el-button>
           <el-button type="success" @click="addManagerBtn">确定</el-button>
@@ -217,14 +261,23 @@ export default {
       dialogTableVisible:false,
       dialogData:{
         activityName:'',//活动名称
+        jumpType:'',//跳转类型:0,APP内打开,1浏览器打开
         jumpUrl:'',//活动封面URL
-        orderNum:'',
+        orderNum:'',//排序号
         activityStartTime:'',//活动开始时间
         activityEndTime:'',//活动结束时间
         state:'',//活动状态:0关闭,1启用
-        activityDetail:'',//活动详情
-        
+        activityDetail:'',//活动标题
+        coverImgUrl:'',//活动封面URL
+        coverImgUrlAll:'',//活动封面URL全路径
+        mediaType:'',//媒体类型:0图片,1视频
+        mediaUrl:'',//媒体URL
+        ruleWeight:'',//权重,值越大显示概率越大,1~100
+        showPosition:'',//展示位置多选,1banner,2书籍内部,3消息推送
+        targetTags:'',//目标标签
       },
+      showPositionArr:[],//展示位置
+      mediaSources:'',//媒体来源，0：本地上传，1：从URL插入
       dialogRules: {
         activityName: [{ required: true, trigger: 'blur',validator:validatorColumnName }],
         activityStartTime: [{ required: true, trigger: 'blur',message:'请选择开始时间'  }],
@@ -459,6 +512,9 @@ export default {
 } */
 </style>
 <style>
+ .el-checkbox,.el-radio{
+   margin-right:5px;
+ }
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

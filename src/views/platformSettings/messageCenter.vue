@@ -5,18 +5,18 @@
         v-el-drag-dialog
         :title="dialogTitle"
         :visible.sync="dialogTableVisible"
-        width='600px'
+        width='800px'
       >
       <el-form class="form-container" :model="dialogData" :rules="dialogRules"  ref="dialogData">
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="名称:" prop="title">
-          <el-input class="article-textarea" placeholder="请输入名称" style="width:215px;" maxlength="50" v-model.trim="dialogData.title"></el-input>
+          <el-input class="article-textarea" placeholder="请输入名称" style="width:515px;" maxlength="50" v-model.trim="dialogData.title"></el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="公告状态:" prop="state">
           <el-radio v-model="dialogData.state" :label="1" border>发布</el-radio>
           <el-radio v-model="dialogData.state" :label="0" border>草稿</el-radio>
         </el-form-item>
         <el-form-item style="margin-bottom: 20px;" label-width="120px" label="公告内容:" prop="message">
-          <el-input  type="textarea"  :rows="3" placeholder="请输入内容" style="width:215px;" maxlength="500"  v-model.trim="dialogData.message"></el-input>
+          <el-input  type="textarea"  :rows="12" placeholder="请输入内容" style="width:515px;" maxlength="500"  v-model.trim="dialogData.message"></el-input>
         </el-form-item>
         <!-- <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动开始时间:" prop="activityStartTime">
           <el-date-picker
@@ -96,7 +96,7 @@
         />
       </el-form-item>
       <el-form-item style="margin-bottom:15px;float:right;">
-        <el-button type="primary" @click="openEditOrAdd('add')" >添加活动</el-button>
+        <el-button type="primary" @click="openEditOrAdd('add')" >添加公告</el-button>
       </el-form-item>
     </el-form>
     
@@ -114,7 +114,25 @@
       </el-table-column>
       <el-table-column label="名称" prop='title'  align="center" :min-width="150"></el-table-column>
       
-      <el-table-column label="公告内容" prop='message'  align="center" :min-width="150"></el-table-column>
+      <!-- <el-table-column label="公告内容" prop='message'  align="center" :min-width="150"></el-table-column> -->
+      <el-table-column label='公告内容' :min-width="110" align="center">
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            title=""
+            width="300"
+            trigger="hover">
+            <div style="white-space: pre-wrap;padding:10px;">
+              <!-- {{scope.row.introduction}} -->
+              <p v-html="scope.row.message"></p>
+            </div>
+            <div slot="reference" style="width:150px;height:81px;line-height:27px;overflow: hidden;white-space: pre-wrap;">
+              <!-- {{scope.row.introduction}} -->
+              <p v-html="scope.row.message"></p></div>
+          </el-popover>
+          
+        </template>
+      </el-table-column>
       <el-table-column label='更新时间'  align="center" :min-width="160">
         <template slot-scope="scope">
           {{scope.row.updateTime}}

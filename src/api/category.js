@@ -565,8 +565,22 @@ export function noticeDelete(data) {
   })
 }
 
-
-
+//  获取VIP开关值
+export function managerBookVipGet(data) { 
+  return request({
+      url: '/manager/book/vip/get',
+      method: 'get',
+      params: data
+  })
+}
+//  VIP开关
+export function managerBookVipEnable(data) { 
+  return request({
+      url: '/manager/book/vip/enable',
+      method: 'get',
+      params: data
+  })
+}
 
 
 

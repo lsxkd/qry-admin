@@ -103,54 +103,76 @@
         </div>
       </el-form>
     </el-dialog>
-    <el-form  size="small" inline :model="userListPage">
-      <el-form-item label="书名:">
-        <el-input placeholder="书名" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
-      </el-form-item>
-      <el-form-item label="分类:">
-        <!-- <el-input placeholder="分类ID" v-model.trim="userListPage.categoryId" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable /> -->
-        <el-select v-model="userListPage.categoryId" filterable  clearable placeholder="请选择" style="width:150px;">
-          <el-option
-            v-for="item in categoryListData"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否完结:">
-        <el-select v-model="userListPage.complete" clearable placeholder="请选择">
-          <el-option label="否" value="0"> </el-option>
-          <el-option label="是" value="1"> </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否免费:">
-        <el-select v-model="userListPage.free" clearable placeholder="请选择">
-          <el-option label="否" value="0"> </el-option>
-          <el-option label="是" value="1"> </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否是VIP可看:">
-        <el-select v-model="userListPage.vip" clearable placeholder="请选择">
-          <el-option label="否" value="0"> </el-option>
-          <el-option label="是" value="1"> </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          title="搜索"
-          style="font-size: 16px"
-          @click="searchBtn()"
-        />
-      </el-form-item>
-      <el-form-item style="margin-bottom:15px;float:right;">
-        <el-button type="success" @click="managerBookPage" >刷新当前列表</el-button>
-        <el-button type="primary" @click="openEditOrAdd('add')" >添加小说</el-button>
-      </el-form-item>
-    </el-form>
+    <div>
+      <el-form  size="small" inline style="margin-bottom:15px;float:right;">        
+        <el-form-item label="app是否展示会员书籍:" >
+          <el-switch
+            v-model="vipEnable"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-value="1"
+            inactive-value='0'
+            active-text="开启"
+            inactive-text="关闭"
+            @change="managerBookVipEnable">
+          </el-switch>
+        </el-form-item>
+        <el-form-item >
+          <el-button type="success" @click="managerBookPage" >刷新当前列表</el-button>
+          <el-button type="primary" @click="openEditOrAdd('add')" >添加小说</el-button>
+        </el-form-item>
+      </el-form>
+      <div class="clear" style="clear:both;"></div>
+    </div>
+    <div>
+      <el-form  size="small" inline :model="userListPage">
+        <el-form-item label="书名:">
+          <el-input placeholder="书名" v-model.trim="userListPage.name" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
+        </el-form-item>
+        <el-form-item label="分类:">
+          <!-- <el-input placeholder="分类ID" v-model.trim="userListPage.categoryId" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable /> -->
+          <el-select v-model="userListPage.categoryId" filterable  clearable placeholder="请选择" style="width:150px;">
+            <el-option
+              v-for="item in categoryListData"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否完结:">
+          <el-select v-model="userListPage.complete" clearable placeholder="请选择">
+            <el-option label="否" value="0"> </el-option>
+            <el-option label="是" value="1"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否免费:">
+          <el-select v-model="userListPage.free" clearable placeholder="请选择">
+            <el-option label="否" value="0"> </el-option>
+            <el-option label="是" value="1"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否是VIP可看:">
+          <el-select v-model="userListPage.vip" clearable placeholder="请选择">
+            <el-option label="否" value="0"> </el-option>
+            <el-option label="是" value="1"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            title="搜索"
+            style="font-size: 16px"
+            @click="searchBtn()"
+          />
+        </el-form-item>
+        
+      </el-form>
+    </div>
+    
+
     
     <el-table :data="managerBookPageData" element-loading-text="拼命加载中" border fit stripe highlight-current-row>
       <el-table-column align="center" label='#' :min-width="60">
@@ -200,8 +222,8 @@
       <el-table-column label="总推荐(点击量)" prop='clickNum' align="center" :min-width="110"></el-table-column>
       <el-table-column label="评分" prop='score' align="center" :min-width="110"></el-table-column>
       <el-table-column label="标签" prop='tags' align="center" :min-width="110">
-        <template slot-scope="scope">
-          <span v-if="scope.row.tagList" v-for="(em,indexEms) in scope.row.tagList" :key='indexEms'>
+        <template slot-scope="scope" v-if="scope.row.tagList">
+          <span  v-for="(em,indexEms) in scope.row.tagList" :key='indexEms'>
             {{em.tag}}
           </span>
           
@@ -259,7 +281,7 @@
 </template>
 
 <script>
-import { managerBookPage,managerBookSave,managerBookDelete,fileUpload,categoryList,tagList,managerBookClearCoverImg,managerBookVipSetting } from '@/api/category.js';
+import { managerBookPage,managerBookSave,managerBookDelete,fileUpload,categoryList,tagList,managerBookClearCoverImg,managerBookVipSetting,managerBookVipGet ,managerBookVipEnable} from '@/api/category.js';
 import moment from 'moment';
 import { mapState } from "vuex";
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
@@ -334,7 +356,8 @@ export default {
       },
       tagListData:[],
       // defaultImg:"../../assets/images/default_img_bg.png",
-      defaultImg:'http://47.112.147.92:8080/novelImg/79ed79ef4fd.png'
+      defaultImg:'http://47.112.147.92:8080/novelImg/79ed79ef4fd.png',
+      vipEnable:"1",//是否开启VIP:0否,1是
     }
   },
   computed: {
@@ -346,8 +369,35 @@ export default {
     this.managerBookPage();
     this.categoryList()
     this.tagList()
+    this.managerBookVipGet()
   },
   methods: {
+    managerBookVipGet(){
+      managerBookVipGet().then(res => {
+        if(res.code == 200){   
+          this.vipEnable = String(res.data)
+        }else{
+          this.$message.error(res.msg);
+        }
+        
+      })
+    },
+    managerBookVipEnable(){
+      const data = {
+        vipEnable:this.vipEnable
+      }
+      managerBookVipEnable(data).then(res => {
+        if(res.code == 200){   
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          });
+        }else{
+          this.$message.error(res.msg);
+        }
+        
+      })
+    },
     managerBookVipSetting(ids,vips){
       const data = {
         id:ids,

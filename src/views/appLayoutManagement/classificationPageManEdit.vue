@@ -336,7 +336,7 @@ export default {
         delete this.classifiedsListPage.name;
       }
       categoryList(this.classifiedsListPage).then(res => {
-        // console.log(res.data)
+        console.log(res.data)
         this.classifiedsList = res.data.list;
         this.totalTwo = res.data.total;
       });

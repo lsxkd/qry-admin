@@ -192,6 +192,8 @@ export default {
         complete:'',//是否完结:0否,1是
         free:'',//是否免费:0否,1是
         name:'',//书名
+        vip:'0'
+
       },
       categoryListPage:{
         pageNum: 1,

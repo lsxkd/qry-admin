@@ -64,7 +64,7 @@ export function validateNumEn(str) {
 
 /* 数字、字母及中文*/
 export function validateChNumEn(str) {
-  const reg = /^[\u4e00-\u9fa5a-zA-Z\d\(\)（）\_]+$/
+  const reg = /^[\u4e00-\u9fa5a-zA-Z\d\(\)（）\_\.\。\，\！\!\,\:\：\;\；\?\？\、]+$/
   return reg.test(str)
 }
 
