@@ -34,7 +34,9 @@ export default {
     feedbackManagement:'反馈帮助管理',
     feedbackBook:'书籍纠错反馈管理',
     applyNovelManagement:'申请上架小说管理',
-    activityManagement:'活动管理',
+    adManagement:'广告活动管理',
+    activityManagement:'广告活动列表',
+    activityConfig:'广告活动配置',
 
     bannerList:'banner管理',
     
@@ -45,6 +47,7 @@ export default {
     managerOrder:'订单管理',
     orderList:'订单列表',
     vipOrderList:'开通会员订单列表',
+    adFreeList:'免广告业务列表',
 
     managerTag:'标签管理',
     tagList:'标签列表',

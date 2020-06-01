@@ -159,6 +159,9 @@ export default {
         signIncDay:'',
         signMaxCoinPercent:'',
         signVipBaseCoinPercent:'',
+        noAdvertCoin:'',
+        noAdvertDays:'',
+        readAdvertCoin:'',
       },
       dialogRules: {
         applyBookCoin: [{ required: true, trigger: 'blur',validator: validatorNumber }],
@@ -174,6 +177,9 @@ export default {
         signIncDay:[{ required: true, trigger: 'blur',validator: validatorNumber }],
         signMaxCoinPercent:[{ required: true, trigger: 'blur',validator: validatorNumber }],
         signVipBaseCoinPercent:[{ required: true, trigger: 'blur',validator: validatorNumber }],
+        noAdvertCoin:[{ required: true, trigger: 'blur',validator: validatorNumber }],
+        noAdvertDays:[{ required: true, trigger: 'blur',validator: validatorNumber }],
+        readAdvertCoin:[{ required: true, trigger: 'blur',validator: validatorNumber }],
       },
       dialogTitle:'添加',
       editFlag:false,
@@ -287,6 +293,15 @@ export default {
                 case 'signVipBaseCoinPercent':
                     newObj.title = 'VIP每天领取金币的基数是签到金币基数百分比 单位%'
                     newObj.value = newObj.value + '%'
+                    break;
+                case 'noAdvertCoin':
+                    newObj.title = '免广告业务金币数量'
+                    break;
+                case 'noAdvertDays':
+                    newObj.title = '免广告业务天数'
+                    break;
+                case 'readAdvertCoin':
+                    newObj.title = '点击广告奖励金币'
                     break;
             }
             // console.log(newObj)

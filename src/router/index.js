@@ -216,6 +216,42 @@ export const constantRouterMap = [
 
     ]
   },
+  {
+    path: '/adManagement',
+    component: Layout,
+    redirect: '/adManagement/rechareList',
+    name: 'adManagement',
+    meta: {
+      title: 'adManagement',
+      icon: 'setting',
+      name:'广告活动管理',
+    },
+    children: [
+      {
+        path: 'activityManagement',
+        component: () => import('@/views/adManagement/activityManagement'),
+        name: 'activityManagement',
+        meta: {
+          title: 'activityManagement',
+          icon: '',
+          title1: '活动列表',
+          noCache: false,
+        }
+      },
+      {
+        path: 'activityConfig',
+        component: () => import('@/views/adManagement/activityConfig'),
+        name: 'activityConfig',
+        meta: {
+          title: 'activityConfig',
+          icon: '',
+          title1: '活动配置',
+          noCache: false,
+        }
+      },
+
+    ]
+  },
   /* ======================================平台设置======================================== */
   {
     path: '/platformSettings',
@@ -249,17 +285,7 @@ export const constantRouterMap = [
           noCache: false,
         }
       },
-      {
-        path: 'activityManagement',
-        component: () => import('@/views/platformSettings/activityManagement'),
-        name: 'activityManagement',
-        meta: {
-          title: 'activityManagement',
-          icon: '',
-          title1: '活动管理',
-          noCache: false,
-        }
-      },
+      
       {
         path: 'applyNovelManagement',
         component: () => import('@/views/platformSettings/applyNovelManagement'),
@@ -362,6 +388,17 @@ export const constantRouterMap = [
       meta: {
         title: 'vipOrderList',
         name:'会员订单列表',
+        noCache: false,
+        // icon: 'nested'
+      }
+    },
+    {
+      path: 'adFreeList',
+      component: () => import('@/views/managerOrder/adFreeList'),
+      name: 'adFreeList',
+      meta: {
+        title: 'adFreeList',
+        name:'免广告业务列表',
         noCache: false,
         // icon: 'nested'
       }

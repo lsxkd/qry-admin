@@ -85,6 +85,15 @@ export function orderVipList(data) { //分类删除
 }
 
 
+// 免广告业务分页查询
+export function orderCoinNoadvertPage(data) { //免广告业务分页查询
+  return request({
+      url: 'order/coin/noadvert/page',
+      method: 'post',
+      data
+  })
+}
+
 
 
 // 标签列表
@@ -531,6 +540,33 @@ export function activitySaveOrUpdate(data) {
       data
   })
 }
+
+// 活动配置分页
+export function activityConfigPage(data) { 
+  return request({
+      url: '/activity/config/page',
+      method: 'post',
+      data
+  })
+}
+//  删除显示活动
+export function activityConfigDelete(data) { 
+  return request({
+      url: '/activity/config/delete',
+      method: 'get',
+      params: data
+  })
+}
+// 添加或修改活动显示配置
+export function activityConfigSaveOrUpdate(data) { 
+  return request({
+      url: '/activity/config/saveOrUpdate',
+      method: 'post',
+      data
+  })
+}
+
+
 
 // 公告分页
 export function noticePage(data) { 

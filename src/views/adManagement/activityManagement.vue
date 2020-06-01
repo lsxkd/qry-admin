@@ -13,6 +13,9 @@
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动名称:" prop="activityName">
               <el-input class="article-textarea" placeholder="请输入活动名称" style="width:215px;" maxlength="50" v-model.trim="dialogData.activityName"></el-input>
             </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动标题:" prop="activityDetail">
+              <el-input class="article-textarea" placeholder="请输入活动标题" style="width:215px;" maxlength="500" v-model.trim="dialogData.activityDetail"></el-input>
+            </el-form-item>
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="活动开始时间:" prop="activityStartTime">
               <el-date-picker
                 v-model="dialogData.activityStartTime"
@@ -43,47 +46,10 @@
             <el-form-item style="margin-bottom: 20px;" label-width="120px" label="排序:" prop="orderNum">
               <el-input class="article-textarea" placeholder="请输入排序" style="width:215px;" maxlength="9" v-model.number.trim="dialogData.orderNum"></el-input>
             </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="权重(1-100):" prop="ruleWeight">
-              <el-input class="article-textarea" placeholder="请输入权重" style="width:215px;" maxlength="50" v-model.trim="dialogData.ruleWeight"></el-input>
-            </el-form-item>            
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="目标标签:" prop="targetTags">
-              <el-input class="article-textarea" placeholder="请输入目标标签" style="width:215px;" maxlength="50" v-model.trim="dialogData.targetTags"></el-input>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="120px" label="展示位置(多选):" prop="showPosition" >
-              <el-checkbox-group v-model="showPositionArr" style="width:320px;">
-                <el-checkbox :label="1" border>banner</el-checkbox>
-                <el-checkbox :label="2" border>书籍内部</el-checkbox>
-                <el-checkbox :label="3" border>消息推送</el-checkbox>
-              </el-checkbox-group>
-              <!-- <el-radio v-model="dialogData.showPosition" :label="1" border size="mini">banner</el-radio>
-              <el-radio v-model="dialogData.showPosition" :label="2" border size="mini">书籍内部</el-radio>
-              <el-radio v-model="dialogData.showPosition" :label="3" border size="mini">消息推送</el-radio> -->
-            </el-form-item>
-            
-          </el-col>
-          <el-col :sm="24" :md="12">
-            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="活动标题:" prop="activityDetail">
-              <el-input class="article-textarea" placeholder="请输入活动标题" style="width:236px;" maxlength="50" v-model.trim="dialogData.activityDetail"></el-input>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="跳转类型:" prop="jumpType">
-              <el-radio v-model="dialogData.jumpType" :label="0" border >APP内打开</el-radio>
-              <el-radio v-model="dialogData.jumpType" :label="1" border >浏览器打开</el-radio>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="跳转URL:" prop="jumpUrl">
-              <el-input class="article-textarea" placeholder="请输入跳转URL" style="width:236px;"  v-model.trim="dialogData.jumpUrl"></el-input>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体类型:" prop="mediaType">
-              <el-radio v-model="dialogData.mediaType" :label="0" border >图片</el-radio>
-              <el-radio v-model="dialogData.mediaType" :label="1" border >视频</el-radio>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体来源:" prop="mediaSources">
-              <el-radio v-model="mediaSources" :label="0" border >本地上传</el-radio>
-              <el-radio v-model="mediaSources" :label="1" border >从URL插入</el-radio>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体URL:" prop="mediaUrl" v-if="mediaSources == 1">
-              <el-input class="article-textarea" placeholder="请输入媒体URL" style="width:236px;"  v-model.trim="dialogData.mediaUrl"></el-input>
-            </el-form-item>
-            <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="120px" label="banner图片:">
+            <!-- <el-form-item style="margin-bottom: 20px;" label-width="120px" label="按钮名称:" prop="buttonName">
+              <el-input class="article-textarea" placeholder="请输入按钮名称" style="width:215px;" maxlength="50" v-model.trim="dialogData.buttonName"></el-input>
+            </el-form-item> -->
+            <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="120px" label="封面图片:">
               <el-upload
               style="width:215px;"
                 class="avatar-uploader"
@@ -96,6 +62,44 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
+            
+          </el-col>
+          <el-col :sm="24" :md="12">
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="按钮名称:" prop="buttonName">
+              <el-input class="article-textarea" placeholder="请输入按钮名称" style="width:236px;" maxlength="20" v-model.trim="dialogData.buttonName"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="跳转类型:" prop="jumpType">
+              <el-radio v-model="dialogData.jumpType" :label="0" border >APP内打开</el-radio>
+              <el-radio v-model="dialogData.jumpType" :label="1" border >浏览器打开</el-radio>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="跳转URL:" prop="jumpUrl">
+              <el-input class="article-textarea" placeholder="请输入跳转URL" style="width:236px;" maxlength="2000" v-model.trim="dialogData.jumpUrl"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体类型:" prop="mediaType">
+              <el-radio v-model="dialogData.mediaType" :label="0" border >图片</el-radio>
+              <el-radio v-model="dialogData.mediaType" :label="1" border >视频</el-radio>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体来源:" prop="mediaSoure">
+              <el-radio v-model="dialogData.mediaSoure" :label="0" border :disabled="dialogData.mediaType == 1" >本地上传</el-radio>
+              <el-radio v-model="dialogData.mediaSoure" :label="1" border >从URL插入</el-radio>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 20px;" label-width="100px" label="媒体URL:" prop="mediaUrl" v-if="dialogData.mediaSoure == 1">
+              <el-input class="article-textarea" placeholder="请输入媒体URL" style="width:236px;" maxlength="2000"  v-model.trim="dialogData.mediaUrl"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" style="margin-bottom: 20px;" label-width="100px" label="图片上传:" v-if="dialogData.mediaType == 0&&dialogData.mediaSoure == 0">
+              <el-upload
+              style="width:215px;"
+                class="avatar-uploader"
+                :action="FileUpload"
+                :show-file-list="false"
+                :headers="{'Authorization':tokenData}"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="imgUploadSrc" :src="imgUploadSrc" class="avatar" style="width:auto;height:auto;max-width:215px;max-height:215px;margin:0 auto;">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+            
             
 
           </el-col>
@@ -110,7 +114,7 @@
       <el-form-item label="名称:">
         <el-input placeholder="名称" v-model.trim="userListPage.activityName" @keyup.enter.native="searchBtn" :style="{ width: '150px' }" clearable />
       </el-form-item>
-      <el-form-item label="处理状态:">
+      <el-form-item label="是否启用:">
         <el-select v-model="userListPage.state" clearable placeholder="请选择">
           <el-option label="关闭" value="0"> </el-option>
           <el-option label="启用" value="1"> </el-option>
@@ -155,7 +159,8 @@
         </template>
       </el-table-column>
       <el-table-column label="活动名称" prop='activityName'  align="center" :min-width="150"></el-table-column>
-      <el-table-column label='活动封面' :min-width="110" align="center">
+      <el-table-column label="活动标题" prop='activityDetail'  align="center" :min-width="150"></el-table-column>
+      <el-table-column label='活动封面' :min-width="120" align="center">
         <template slot-scope="scope">
           <el-popover
             placement="right"
@@ -178,17 +183,48 @@
           {{scope.row.activityEndTime}}
         </template>
       </el-table-column>
-      
+      <el-table-column label="按钮名称" prop='buttonName'  align="center" :min-width="150"></el-table-column>
       <el-table-column label="跳转URL" prop='jumpUrl'  align="center" :min-width="150"></el-table-column>
       <el-table-column label="排序" prop='orderNum'  align="center" :min-width="60"></el-table-column>
       
-      <!-- <el-table-column label="账户状态" :min-width="150">
+      <el-table-column label="媒体类型" :min-width="110" align="center">
         <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.state == 0">关闭</el-tag>
-          <el-tag type="success" v-if="scope.row.state == 1">启用</el-tag>     
+          <el-tag type="warning" v-if="scope.row.mediaType == 0">图片</el-tag>
+          <el-tag type="success" v-if="scope.row.mediaType == 1">视频</el-tag>     
         </template>
-      </el-table-column> -->
-      <el-table-column label="账户状态" :min-width="150" align="center">
+      </el-table-column>
+      <el-table-column label="媒体" prop='mediaUrl'  align="center" :min-width="350">
+        <template slot-scope="scope">
+          <div v-if="scope.row.mediaType == 0">
+            <el-popover
+              placement="right"
+              title=""
+              width="300"
+              trigger="hover">
+              <img :src="scope.row.mediaUrl" style="width:100%;height:auto;">
+              <img :src="scope.row.mediaUrl" slot="reference" style="max-width:100px;max-height:80px;display:block;margin:0 auto;">
+            </el-popover>
+          </div>
+          <div v-if="scope.row.mediaType == 1">
+            <el-popover
+              placement="right"
+              title=""
+              width="350"
+              @show="videoShow(scope.row.mediaUrl)"
+              trigger="hover">
+              <video width="320" height="240" controls v-if="scope.row.mediaUrl == viewShowFlag">
+                <source :src="scope.row.mediaUrl"  type="video/mp4">
+                <source :src="scope.row.mediaUrl"  type="video/ogg">
+                您的浏览器不支持 HTML5 video 标签。
+              </video>
+              <!-- <img :src="scope.row.mediaUrl" style="width:100%;height:auto;"> -->
+              <img :src="scope.row.coverImgUrlAll" slot="reference" style="max-width:100px;max-height:80px;display:block;margin:0 auto;">
+            </el-popover>
+            
+          </div>     
+        </template>
+      </el-table-column>
+      <el-table-column label="是否启用" :min-width="150" align="center">
         <template slot-scope="scope">
           <div style="height:21px;">
             <el-switch
@@ -272,22 +308,25 @@ export default {
         coverImgUrlAll:'',//活动封面URL全路径
         mediaType:'',//媒体类型:0图片,1视频
         mediaUrl:'',//媒体URL
-        ruleWeight:'',//权重,值越大显示概率越大,1~100
-        showPosition:'',//展示位置多选,1banner,2书籍内部,3消息推送
-        targetTags:'',//目标标签
+        mediaSoure:0,//媒体来源:0本体上传,1从URL插入
+        buttonName:'',//按钮名称
       },
-      showPositionArr:[],//展示位置
       mediaSources:'',//媒体来源，0：本地上传，1：从URL插入
       dialogRules: {
         activityName: [{ required: true, trigger: 'blur',validator:validatorColumnName }],
         activityStartTime: [{ required: true, trigger: 'blur',message:'请选择开始时间'  }],
         activityEndTime: [{ required: true, trigger: 'blur',message:'请选择结束时间'  }],
+        jumpType: [{ required: true, trigger: 'blur',message:'请选择跳转类型'   }],
         jumpUrl: [{ required: true, trigger: 'blur',validator: validatorJumpUrl  }],
+        mediaType: [{ required: true, trigger: 'blur',message:'请选择媒体类型'   }],
+        mediaSoure: [{ required: true, trigger: 'blur',message:'请选择媒体来源'   }],
+        mediaUrl: [{ required: true, trigger: 'blur',validator: validatorJumpUrl  }],
         orderNum: [{ required: true, trigger: 'blur',validator: validatorOrderNum  }],
         state:[{ required: true, trigger: 'blur',message:'请选择是否开启'  }],
       },
       dialogTitle:'添加',
       imgUploadSrc:'',
+      viewShowFlag:'',
       pickerOptionsOne: {
         disabledDate: t => {
             // if(this.searchInfo.endDate !==null){
@@ -329,6 +368,9 @@ export default {
     this.activityPage();
   },
   methods: {
+    videoShow(val){
+      this.viewShowFlag = val
+    },
     selectChange(val){
       this.$forceUpdate();
     },
@@ -365,7 +407,6 @@ export default {
     },
     openEditOrAdd(flag,row){
       this.dialogTableVisible = true
-      console.log(row)
       if(flag == 'edit'){
         this.dialogTitle = '编辑'
         this.dialogData.id = row.id
@@ -377,9 +418,16 @@ export default {
         this.imgUploadSrc = row.coverImgUrlAll
         this.dialogData.activityStartTime = row.activityStartTime
         this.dialogData.activityEndTime = row.activityEndTime
+
+        this.dialogData.activityDetail = row.activityDetail
+        this.dialogData.buttonName = row.buttonName
+        this.dialogData.jumpType = row.jumpType
+        this.dialogData.mediaType = row.mediaType
+        this.dialogData.mediaUrl = row.mediaUrl
+        this.dialogData.mediaSoure = row.mediaSoure
       }else{
         this.dialogTitle = '添加'
-        this.dialogData.id = ''
+        delete this.dialogData.id
         this.dialogData.activityName = ''
         this.dialogData.jumpUrl = ''
         this.dialogData.orderNum = ''
@@ -388,6 +436,12 @@ export default {
         this.imgUploadSrc = ''
         this.dialogData.activityStartTime = ''
         this.dialogData.activityEndTime = ''
+        this.dialogData.activityDetail = ''
+        this.dialogData.buttonName = ''
+        this.dialogData.jumpType = ''
+        this.dialogData.mediaType = ''
+        this.dialogData.mediaUrl = ''
+        this.dialogData.mediaSoure= 0
       }
     },
     searchBtn(){
@@ -420,7 +474,11 @@ export default {
       })
     },
     addManagerBtn(){
-
+      // for(let key in this.dialogData){
+      //   if(!this.dialogData[key]){
+      //     delete this.dialogData[key]
+      //   }
+      // }
       this.$refs.dialogData.validate(valid => {
         if (valid) {
           if(this.dialogData.coverImgUrl == ''){
@@ -430,14 +488,21 @@ export default {
           activitySaveOrUpdate(this.dialogData).then(res => {
             if(res.code == 200){
               this.dialogTableVisible = false
-              this.dialogData.id = ''
-              this.dialogData.name = ''
-              this.dialogData.introduce = ''
+              delete this.dialogData.id
+              this.dialogData.activityName = ''
+              this.dialogData.jumpUrl = ''
               this.dialogData.orderNum = ''
               this.dialogData.coverImgUrl = ''
+              this.dialogData.state = ''
               this.imgUploadSrc = ''
               this.dialogData.activityStartTime = ''
               this.dialogData.activityEndTime = ''
+              this.dialogData.activityDetail = ''
+              this.dialogData.buttonName = ''
+              this.dialogData.jumpType = ''
+              this.dialogData.mediaType = ''
+              this.dialogData.mediaUrl = ''
+              this.dialogData.mediaSoure=''
               this.activityPage()
               this.$message({
                   type: 'success',

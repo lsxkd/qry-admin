@@ -207,6 +207,16 @@
         </template>
       </el-table-column>
       <el-table-column label="vip过期时间" align="center" prop='vipExpDate' :min-width="160"></el-table-column>
+      
+      <el-table-column label="是否免广告" align="center" :min-width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.noAdvert == 1">是</span>
+          <span v-else>否</span>
+          
+        </template>
+      </el-table-column>
+      <el-table-column label="免广告过期时间" align="center" prop='noAdvertExpDate' :min-width="160"></el-table-column>
+
       <el-table-column label="账户状态" align="center" :min-width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.enable == 0">正常</span>

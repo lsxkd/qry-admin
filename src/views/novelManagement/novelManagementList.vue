@@ -270,10 +270,12 @@
     </el-table>
     <el-pagination
         @current-change="pageChange"
+        @size-change="handleSizeChange"
         style="text-align:center;margin-top:3px"
         background
-        layout="prev, pager, next, jumper"
+        layout="sizes,prev, pager, next, jumper"
         :page-size="userListPage.pageSize"
+        :page-sizes="[5, 6, 7, 8,9,10]"
         :current-page="userListPage.pageNum"
         :total="total"
       ></el-pagination>
@@ -372,6 +374,11 @@ export default {
     this.managerBookVipGet()
   },
   methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.userListPage.pageSize = val
+      this.managerBookPage();
+    },
     managerBookVipGet(){
       managerBookVipGet().then(res => {
         if(res.code == 200){   
