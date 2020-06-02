@@ -69,11 +69,10 @@
               <el-table-column align="center" label="#" :min-width="60">
                 <template slot-scope="scope">{{scope.$index + 1}}</template>
               </el-table-column>
-              <el-table-column label="创建时间" align="center" :min-width="160">
-                <template slot-scope="scope">{{scope.row.createTime}}</template>
-              </el-table-column>
+              
               <el-table-column label="活动名称" prop="activityName" align="center" :min-width="150"></el-table-column>
               <el-table-column label="活动标题" prop="activityDetail" align="center" :min-width="150"></el-table-column>
+              <el-table-column label="显示权重" prop="ruleWeight" align="center" :min-width="150"></el-table-column>
               <el-table-column label="活动封面" :min-width="120" align="center">
                 <template slot-scope="scope">
                   <el-popover placement="right" title width="300" trigger="hover">
@@ -88,12 +87,15 @@
                     <el-tag type="success" v-if="scope.row.effectiveState == 1">已生效</el-tag>     
                     </template>
                 </el-table-column>
+              <el-table-column label="创建时间" align="center" :min-width="160">
+                <template slot-scope="scope">{{scope.row.createTime}}</template>
+              </el-table-column>
               <!-- <el-table-column label="简介" prop="introduce" align="center" :min-width="150"></el-table-column> -->
               <!-- <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column> -->
               <el-table-column align="center" fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
                   <!-- <el-button type="primary" size="small" @click="addSelects(scope.row)">添加</el-button> -->
-                  <el-button type="danger" size="small" @click="delConfirm(scope.row.activityConfigId                        )">删除</el-button>
+                  <el-button type="danger" size="small" @click="delConfirm(scope.row.activityConfigId)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -144,9 +146,7 @@
           <el-table-column align="center" label="#" :min-width="60">
             <template slot-scope="scope">{{scope.$index + 1}}</template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" :min-width="160">
-            <template slot-scope="scope">{{scope.row.createTime}}</template>
-          </el-table-column>
+          
           <el-table-column label="活动名称" prop="activityName" align="center" :min-width="150"></el-table-column>
           <el-table-column label="活动标题" prop="activityDetail" align="center" :min-width="150"></el-table-column>
           <el-table-column label="活动封面" :min-width="120" align="center">
@@ -167,6 +167,9 @@
                 <el-tag type="danger" v-if="scope.row.expireState == 0">已过期</el-tag>     
                 </template>
             </el-table-column>
+          <el-table-column label="创建时间" align="center" :min-width="160">
+            <template slot-scope="scope">{{scope.row.createTime}}</template>
+          </el-table-column>
           <!-- <el-table-column label="简介" prop="introduce" align="center" :min-width="150"></el-table-column> -->
           <!-- <el-table-column label="排序" prop='orderNum' :min-width="60"></el-table-column> -->
           <el-table-column align="center" fixed="right" label="操作" width="100">
